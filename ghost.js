@@ -1,10 +1,12 @@
-function Pacman(maze, tileSize) {
-
-    this.color = "yellow";
+function Ghost(id, name, color, character, maze, tileSize) {
+    this.id = id;
+    this.name = name;
+    this.color = color;
+    this.character = character;
     this.maze = maze;
-
     // speed in frames to travel to the next tile
     this.speed = 8;
+
 
     this.pointInMazeV = verticalTiles / 2;
     this.pointInMazeH = horizontalTiles / 2;
@@ -13,17 +15,6 @@ function Pacman(maze, tileSize) {
     this.y = 320;
 
     this.direction = "left";
-
-    var keyStates = [];
-
-    document.addEventListener('keydown', function(e) {
-        keyStates.push( e.keyCode );
-    }, false);
-
-    document.addEventListener('keyup', function(e) {
-        while( (pos = keyStates.indexOf( e.keyCode )) > -1 )
-            keyStates.splice( pos, 1 );
-    }, false);
 
 
     this.update = function () {
@@ -36,17 +27,29 @@ function Pacman(maze, tileSize) {
             var leftAllowed = this.pointInMazeH > 0 ? maze[this.pointInMazeV * horizontalTiles + (this.pointInMazeH - 1)] > 63 : false;
             var rightAllowed = this.pointInMazeH < horizontalTiles - 1 ? maze[this.pointInMazeV * horizontalTiles + this.pointInMazeH + 1] > 63 : false;
 
+            if (upAllowed && this.direction == 'up' || downAllowed && this.direction == 'down' || leftAllowed && this.direction == 'left' || rightAllowed && this.direction == 'right') {
+                // do nothing
+            } else {
+                var allowedDirections = [];
 
-            if (keyStates.indexOf(38) >= 0 && upAllowed) // Up
-                this.direction = "up";
-            else if (keyStates.indexOf(40) >= 0 && downAllowed) // Down
-                this.direction = "down";
-            else if (keyStates.indexOf(37) >= 0 && leftAllowed) // Left
-                this.direction = "left";
-            else if (keyStates.indexOf(39) >= 0 && rightAllowed) // Right
-                this.direction = "right";
-            else
-                this.direction = "stop";
+                if (upAllowed) {
+                    allowedDirections.push("up");
+                }
+
+                if (downAllowed) {
+                    allowedDirections.push("down");
+                }
+
+                if (leftAllowed) {
+                    allowedDirections.push("left");
+                }
+
+                if (rightAllowed) {
+                    allowedDirections.push("right");
+                }
+
+                this.direction = allowedDirections[Math.floor((Math.random() * allowedDirections.length))];
+            }
         }
 
         switch (this.direction) {
@@ -64,5 +67,4 @@ function Pacman(maze, tileSize) {
                 break;
         }
     }
-
 }
