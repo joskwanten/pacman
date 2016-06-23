@@ -17,10 +17,12 @@ function Pacman(maze, tileSize) {
     var keyStates = [];
 
     document.addEventListener('keydown', function(e) {
+        e.preventDefault();
         keyStates.push( e.keyCode );
     }, false);
 
     document.addEventListener('keyup', function(e) {
+        e.preventDefault();
         while( (pos = keyStates.indexOf( e.keyCode )) > -1 )
             keyStates.splice( pos, 1 );
     }, false);

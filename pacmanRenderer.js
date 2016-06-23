@@ -1,8 +1,9 @@
 function pacmanRenderer(context, tileSize) {
 
 
-    this.mouthOpen = 0;
-    this.mouthOpening = true;
+    var mouthOpen = 0;
+    var mouthOpening = true;
+    var lastDirection = "stop";
 
     var animateElements = function() {
         mouthOpen += mouthOpening ? 1 : -1;
@@ -12,7 +13,7 @@ function pacmanRenderer(context, tileSize) {
         }
 
         if (mouthOpen == 0) {
-            mouthOpening
+            mouthOpening = true;
         }
     }
 
@@ -46,13 +47,40 @@ function pacmanRenderer(context, tileSize) {
         ctx.stroke();
 */
 
-        if (pacman.direction == "up") {
+        var offset = 0;
 
+        if (pacman.direction == "stop") {
+            mouthOpen = 0;
+            mouthOpening = true;
+        }
+
+        if (pacman.direction !=  "stop") {
+            lastDirection = pacman.direction;
+        }
+
+        if (lastDirection == "up") {
+            offset = 1.5;
+        }
+
+        if (lastDirection == "left") {
+            offset = 1.0;
+        }
+
+        if (lastDirection == "down") {
+            offset = 0.5;
         }
 
         ctx.beginPath();
         ctx.moveTo(this.x  + pacmanSize / 2, this.y + pacmanSize /2);
-        ctx.arc(this.x + pacmanSize / 2, this.y  + pacmanSize / 2 , pacmanSize / 2, 0.25 * Math.PI, 1.75 * Math.PI, false);
+
+        ctx.arc(
+            this.x + pacmanSize / 2,
+            this.y  + pacmanSize / 2 ,
+            pacmanSize / 2.25,
+            (offset + (0.25 - 0.25 * mouthOpen/ 7)) * Math.PI,
+                (offset + (1.75 + 0.25 * (mouthOpen/ 7)))  * Math.PI,
+            false);
+
         ctx.closePath();
         ctx.fillStyle = 'yellow';
         ctx.fill();
@@ -60,5 +88,6 @@ function pacmanRenderer(context, tileSize) {
         ctx.strokeStyle = '#003300';
         ctx.stroke();
 
+        animateElements();
     }
 }
