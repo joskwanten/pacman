@@ -45,8 +45,16 @@ function Pacman(maze, tileSize) {
                 this.direction = "left";
             else if (keyStates.indexOf(39) >= 0 && rightAllowed) // Right
                 this.direction = "right";
-            else
-                this.direction = "stop";
+            else {
+                // Stop if it cannot move any futher....
+                if (this.direction === "up" && !upAllowed ||
+                        this.direction === "down" && !downAllowed ||
+                        this.direction === "left" && !leftAllowed ||
+                        this.direction === "right" && !rightAllowed) {
+
+                    this.direction = "stop";
+                }
+            }
         }
 
         switch (this.direction) {
