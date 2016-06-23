@@ -380,7 +380,7 @@ function mazeRenderer(ctx, tileSize) {
                     case ElementIDs.ENERGIZER:
                         drawEnergizer(ctx, tileSize, x * tileSize, y * tileSize);
                         break;
-                    case ElementIDs.POINT:
+                    case ElementIDs.PILL:
                         drawPoint(ctx, tileSize, x * tileSize, y * tileSize);
                         break;
                 }

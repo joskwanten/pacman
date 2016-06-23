@@ -37,7 +37,7 @@ var ElementIDs = {
     DVERTTOHORSTR: 31,
     DVERTTOHORSBR: 32,
     ENERGIZER: 64,
-    POINT: 65
+    PILL: 65
 }
 
 
@@ -81,10 +81,10 @@ var pacmanRenderer = new pacmanRenderer(ctx, tileSize);
 /* Create a new Game */
 var myGame = new Game(maze, function (myMaze) {
     mazeRenderer.renderMaze(myMaze);
-    ghostRenderer1.render(this.ghosts[0]);
-    ghostRenderer2.render(this.ghosts[1]);
-    ghostRenderer3.render(this.ghosts[2]);
-    ghostRenderer4.render(this.ghosts[3]);
+    ghostRenderer1.render(this.ghosts[0], pacman.energizerActive > 0, pacman.energizerActive < 2 * 60);
+    ghostRenderer2.render(this.ghosts[1], pacman.energizerActive > 0, pacman.energizerActive < 2 * 60);
+    ghostRenderer3.render(this.ghosts[2], pacman.energizerActive > 0, pacman.energizerActive < 2 * 60);
+    ghostRenderer4.render(this.ghosts[3], pacman.energizerActive > 0, pacman.energizerActive < 2 * 60);
     pacmanRenderer.render(this.pacman)
 });
 

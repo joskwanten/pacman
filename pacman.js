@@ -11,6 +11,10 @@ function Pacman(maze, tileSize) {
 
     this.x = 320;
     this.y = 320;
+    this.pillsEaten = 0;
+
+    // Number of frames an energizer is active
+    this.energizerActive = 0;
 
     this.direction = "left";
 
@@ -29,9 +33,23 @@ function Pacman(maze, tileSize) {
 
 
     this.update = function () {
+        if (this.energizerActive > 0) {
+            this.energizerActive--;
+        }
+
         if (this.x % tileSize == 0 && this.y % tileSize == 0) {
             this.pointInMazeH = this.x / tileSize;
             this.pointInMazeV = this.y / tileSize;
+
+            if (maze[this.pointInMazeV * horizontalTiles + this.pointInMazeH] == ElementIDs.PILL  ) {
+                this.pillsEaten += 1;
+                maze[this.pointInMazeV * horizontalTiles + this.pointInMazeH] = 88;
+            }
+
+            if (maze[this.pointInMazeV * horizontalTiles + this.pointInMazeH] == ElementIDs.ENERGIZER  ) {
+                this.energizerActive = 5 * 60;
+                maze[this.pointInMazeV * horizontalTiles + this.pointInMazeH] = 88;
+            }
 
             var upAllowed = this.pointInMazeV > 0 ? maze[(this.pointInMazeV - 1) * horizontalTiles + this.pointInMazeH] > 63 : false;
             var downAllowed = this.pointInMazeV < verticalTiles - 1 ? maze[(this.pointInMazeV + 1) * horizontalTiles + this.pointInMazeH] > 63 : false;
@@ -53,7 +71,6 @@ function Pacman(maze, tileSize) {
                         this.direction === "down" && !downAllowed ||
                         this.direction === "left" && !leftAllowed ||
                         this.direction === "right" && !rightAllowed) {
-
                     this.direction = "stop";
                 }
             }
