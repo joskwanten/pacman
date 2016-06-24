@@ -12,8 +12,8 @@ function Ghost(id, name, color, character, maze, tileSize) {
     this.pointInMazeH = horizontalTiles / 2;
 
     switch (name) {
-        case "BINKY":
-            this.x = horizontalTiles / 2 * tileSize - 2;
+        case "CLYDE":
+            this.x = horizontalTiles / 2 * tileSize - 2 * tileSize;
             this.y = 17 * tileSize;
             break;
         case "PINKY":
@@ -21,12 +21,12 @@ function Ghost(id, name, color, character, maze, tileSize) {
             this.y = 17 * tileSize;
             break;
         case "INKY":
-            this.x = horizontalTiles / 2 * tileSize + 2;
+            this.x = horizontalTiles / 2 * tileSize + 2 * tileSize;
             this.y = 17 * tileSize;
             break;
         default :
             this.x = horizontalTiles / 2 * tileSize;
-            this.y = 15 * tileSize;
+            this.y = 14 * tileSize;
             break;
     }
 
@@ -38,7 +38,79 @@ function Ghost(id, name, color, character, maze, tileSize) {
         freeze = true;
     }
 
-    this.update = function () {
+
+    function opposite(direction) {
+        switch(direction) {
+            case "up":
+                return "down";
+            case "down":
+                return "up";
+            case "left":
+                return "right";
+            case "right":
+                return "left";
+        }
+
+        return direction;
+    }
+
+
+    this.blinkyAI = function(pacmanH, pacmanV, allowedDirection) {
+        // Fallback if no good direction can be found
+        var direction = allowedDirection[0];
+
+        if (allowedDirection.length > 1) {
+            if (allowedDirection.indexOf(opposite(this.direction))) {
+                allowedDirection.splice(allowedDirection.indexOf(opposite(this.direction)));
+            }
+        }
+
+        var distance = 100;
+        var newDistance = 0;
+
+        var _this = this;
+
+        allowedDirection.forEach(function(index) {
+
+            // Simple AI that will reduce horizontal or vertical distance with pacman if possible
+            // or else it will select the first allowed option
+            switch(index) {
+                case "up":
+                    newDistance = Math.abs(_this.pointInMazeV - 1 - pacmanV)
+                    if (newDistance < distance && newDistance < Math.abs( _this.pointInMazeV - pacmanV)) {
+                        direction = "up";
+                        distance = newDistance;
+                    }
+                    break;
+                case "down":
+                    newDistance = Math.abs(_this.pointInMazeV + 1 - pacmanV)
+                    if (newDistance < distance && newDistance < Math.abs( _this.pointInMazeV - pacmanV )) {
+                        direction = "down";
+                        distance = newDistance;
+                    }
+                    break;
+                case "left":
+                    newDistance = Math.abs(_this.pointInMazeH - 1 - pacmanH)
+                    if (newDistance < distance && newDistance < Math.abs( _this.pointInMazeH - pacmanH )){
+                        direction = "left";
+                        distance = newDistance
+                    }
+                    break;
+                case "right":
+                    newDistance = Math.abs(_this.pointInMazeH + 1 - pacmanH)
+                    if (newDistance < distance && newDistance < Math.abs(_this.pointInMazeH - pacmanH)) {
+                        direction = "right";
+                        distance = newDistance;
+                    }
+                    break;
+            }
+        });
+
+        return direction;
+
+    }
+
+    this.update = function (pacmanH, pacmanV) {
         // No updates when frozen.
         if (freeze) {
             return;
@@ -53,28 +125,32 @@ function Ghost(id, name, color, character, maze, tileSize) {
             var leftAllowed = this.pointInMazeH > 0 ? maze[this.pointInMazeV * horizontalTiles + (this.pointInMazeH - 1)] > 63 : false;
             var rightAllowed = this.pointInMazeH < horizontalTiles - 1 ? maze[this.pointInMazeV * horizontalTiles + this.pointInMazeH + 1] > 63 : false;
 
-            if (upAllowed && this.direction == 'up' || downAllowed && this.direction == 'down' || leftAllowed && this.direction == 'left' || rightAllowed && this.direction == 'right') {
-                // do nothing
+            var allowedDirections = [];
+
+            if (upAllowed) {
+                allowedDirections.push("up");
+            }
+
+            if (downAllowed) {
+                allowedDirections.push("down");
+            }
+
+            if (leftAllowed) {
+                allowedDirections.push("left");
+            }
+
+            if (rightAllowed) {
+                allowedDirections.push("right");
+            }
+
+            if (this.name == "BLINKY") {
+                this.direction = this.blinkyAI(pacmanH, pacmanV, allowedDirections)
             } else {
-                var allowedDirections = [];
-
-                if (upAllowed) {
-                    allowedDirections.push("up");
+                if (upAllowed && this.direction == 'up' || downAllowed && this.direction == 'down' || leftAllowed && this.direction == 'left' || rightAllowed && this.direction == 'right') {
+                    // do nothing
+                } else {
+                    this.direction = allowedDirections[Math.floor((Math.random() * allowedDirections.length))];
                 }
-
-                if (downAllowed) {
-                    allowedDirections.push("down");
-                }
-
-                if (leftAllowed) {
-                    allowedDirections.push("left");
-                }
-
-                if (rightAllowed) {
-                    allowedDirections.push("right");
-                }
-
-                this.direction = allowedDirections[Math.floor((Math.random() * allowedDirections.length))];
             }
         }
 

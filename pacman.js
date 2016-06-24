@@ -101,8 +101,14 @@ function Pacman(maze, tileSize, ghosts) {
             var _this = this;
             ghosts.forEach(function (ghost) {
                 // Ghost and Pacman are both 2 * tileSize
-                if ((ghost.x <= _this.x) && (_this.x <= ghost.x + 2 * tileSize) &&
-                    (ghost.y <= _this.y) && (_this.y <= ghost.y + 2 * tileSize)) {
+                var gx1 = ghost.x - tileSize / 2; var gx2 = gx1 + 1.5 * tileSize;
+                var gy1 = ghost.y - tileSize / 2; var gy2 = gy1 + 1.5 * tileSize;
+                var px1 = pacman.x - tileSize / 2; var px2 = px1 + 1.5 * tileSize;
+                var py1 = pacman.y - tileSize / 2; var py2 = py1 + 1.5 * tileSize;
+
+                if (((gx1 <= px1 &&  px1 <= gx2) || (gx1 <= px2 && px2 <= gx2)) &&
+                    ((gy1 <= py1 &&  py1 <= gy2) || (gy1 <= py2 && py2 <= gy2))) {
+
                     _this.dieing = _this.dieingFrames;
 
                     // Freeze ghosts

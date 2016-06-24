@@ -54,7 +54,7 @@ function Game(mazeData, renderFunction) {
 
     this.update = function () {
         ghosts.forEach(function (ghost) {
-            ghost.update();
+            ghost.update(pacman.pointInMazeH, pacman.pointInMazeV);
         })
 
         pacman.update();
