@@ -1,4 +1,4 @@
-function Pacman(maze, tileSize) {
+function Pacman(maze, tileSize, ghosts) {
 
     this.color = "yellow";
     this.maze = maze;
@@ -9,11 +9,13 @@ function Pacman(maze, tileSize) {
     this.pointInMazeV = verticalTiles / 2;
     this.pointInMazeH = horizontalTiles / 2;
 
-    this.lifesLeft = 3;
+    this.livesLeft = 3;
 
-    this.x = 320;
-    this.y = 320;
+    this.x = horizontalTiles / 2 * tileSize;
+    this.y = 20 * tileSize;
     this.pillsEaten = 0;
+    this.dieing = 0;
+    this.dieingFrames = 120;
 
     // Number of frames an energizer is active
     this.energizerActive = 0;
@@ -68,7 +70,7 @@ function Pacman(maze, tileSize) {
             else if (keyStates.indexOf(39) >= 0 && rightAllowed) // Right
                 this.direction = "right";
             else {
-                // Stop if it cannot move any futher....
+                // Stop if it cannot move any further....
                 if (this.direction === "up" && !upAllowed ||
                         this.direction === "down" && !downAllowed ||
                         this.direction === "left" && !leftAllowed ||
@@ -78,19 +80,47 @@ function Pacman(maze, tileSize) {
             }
         }
 
-        switch (this.direction) {
-            case "right":
-                this.x += tileSize / this.speed;
-                break;
-            case "left":
-                this.x -= tileSize / this.speed;
-                break;
-            case "up":
-                this.y -= tileSize / this.speed;
-                break;
-            case "down":
-                this.y += tileSize / this.speed;
-                break;
+         // Check for a collision with another ghost if not dieing
+        if(this.dieing == 0) {
+
+            switch (this.direction) {
+                case "right":
+                    this.x += tileSize / this.speed;
+                    break;
+                case "left":
+                    this.x -= tileSize / this.speed;
+                    break;
+                case "up":
+                    this.y -= tileSize / this.speed;
+                    break;
+                case "down":
+                    this.y += tileSize / this.speed;
+                    break;
+            }
+
+            var _this = this;
+            ghosts.forEach(function (ghost) {
+                // Ghost and Pacman are both 2 * tileSize
+                if ((ghost.x <= _this.x) && (_this.x <= ghost.x + 2 * tileSize) &&
+                    (ghost.y <= _this.y) && (_this.y <= ghost.y + 2 * tileSize)) {
+                    _this.dieing = _this.dieingFrames;
+
+                    // Freeze ghosts
+                    ghosts.forEach(function(ghost) {
+                        ghost.freezeGhost();
+                    });
+                }
+            });
+        }
+
+        // If dieing,
+        if (this.dieing != 0) {
+
+            if(this.dieing == 1) {
+                this.livesLeft--;
+            }
+
+            this.dieing--;
         }
     }
 

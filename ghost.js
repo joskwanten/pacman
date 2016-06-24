@@ -11,13 +11,39 @@ function Ghost(id, name, color, character, maze, tileSize) {
     this.pointInMazeV = verticalTiles / 2;
     this.pointInMazeH = horizontalTiles / 2;
 
-    this.x = 320;
-    this.y = 320;
+    switch (name) {
+        case "BINKY":
+            this.x = horizontalTiles / 2 * tileSize - 2;
+            this.y = 17 * tileSize;
+            break;
+        case "PINKY":
+            this.x = horizontalTiles / 2 * tileSize;
+            this.y = 17 * tileSize;
+            break;
+        case "INKY":
+            this.x = horizontalTiles / 2 * tileSize + 2;
+            this.y = 17 * tileSize;
+            break;
+        default :
+            this.x = horizontalTiles / 2 * tileSize;
+            this.y = 15 * tileSize;
+            break;
+    }
 
     this.direction = "left";
 
+    var freeze = false;
+
+    this.freezeGhost = function() {
+        freeze = true;
+    }
 
     this.update = function () {
+        // No updates when frozen.
+        if (freeze) {
+            return;
+        }
+
         if (this.x % tileSize == 0 && this.y % tileSize == 0) {
             this.pointInMazeH = this.x / tileSize;
             this.pointInMazeV = this.y / tileSize;

@@ -70,7 +70,7 @@ function PacmanRenderer(context, tileSize) {
         ctx.stroke();
 
         
-        for(var i = 0; i < pacman.lifesLeft; i++) {
+        for(var i = 0; i < pacman.livesLeft; i++) {
 
             var leftLifeX = tileSize * 2 * i;
             var leftLifeY = tileSize * 34;

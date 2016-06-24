@@ -47,10 +47,9 @@ ghosts.push(new Ghost(ElementIDs.PINKY, "PINKY", "yellow", "SPEEDY", maze, tileS
 ghosts.push(new Ghost(ElementIDs.INKY, "INKY", "blue", "BASHFUL", maze, tileSize));
 ghosts.push(new Ghost(ElementIDs.CLYDE, "CLYDE", "green", "POKEY", maze, tileSize));
 
-var pacman = new Pacman(maze, tileSize);
+var pacman = new Pacman(maze, tileSize, ghosts);
 
 function Game(mazeData, renderFunction) {
-    this.renderFunction = renderFunction;
     this.maze = mazeData;
 
     this.update = function () {
@@ -86,6 +85,7 @@ var pacmanRenderer = new PacmanRenderer(ctx, tileSize);
 
 /* Create a new Game */
 var myGame = new Game(maze, function (myMaze) {
+    
     mazeRenderer.renderMaze(myMaze);
 
     ghosts.forEach(function(ghost, index) {
