@@ -1,4 +1,4 @@
-function ghostRenderer(context, tileSize) {
+function GhostRenderer(context, tileSize) {
 
     //
     this.underoff = 0;

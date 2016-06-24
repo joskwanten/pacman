@@ -1,3 +1,5 @@
+'use strict'
+
 /* Width and Height */
 var W = 896, H = 1152, tileSize = 32, horizontalTiles = 28, verticalTiles = 36;
 
@@ -18,8 +20,6 @@ var ElementIDs = {
     SBRCORNER: 12, /* Single lined bottom-right corner */
     SVERTLINE: 13, /* Single vertical line */
     SHORLINE: 14, /* Single horizontal line */
-    PELLET: 15, /* Pellet to eat by pacman */
-    ENERGIZER: 16, /* Energizer pellet after eating pacman can defeat ghosts */
     BLINKY: 17, /* Blinky the red ghost */
     PINKY: 18, /* Pinky the pink ghost */
     INKY: 19, /* Inky the blue ghost */
@@ -37,7 +37,7 @@ var ElementIDs = {
     DVERTTOHORSTR: 31,
     DVERTTOHORSBR: 32,
     ENERGIZER: 64,
-    PILL: 65
+    PELLET: 65
 }
 
 
@@ -71,21 +71,28 @@ var canvas = document.getElementById("gameCanvas");
 var ctx = canvas.getContext("2d");
 
 /* Create the render-engine */
-var mazeRenderer = new mazeRenderer(ctx, tileSize);
-var ghostRenderer1 = new ghostRenderer(ctx, tileSize);
-var ghostRenderer2 = new ghostRenderer(ctx, tileSize);
-var ghostRenderer3 = new ghostRenderer(ctx, tileSize);
-var ghostRenderer4 = new ghostRenderer(ctx, tileSize);
-var pacmanRenderer = new pacmanRenderer(ctx, tileSize);
+var mazeRenderer = new MazeRenderer(ctx, tileSize);
+
+
+// The ghost renderer has some state, so we create a renderer per ghost
+var ghostRenderers = [];
+ghosts.forEach(function() {
+    ghostRenderers.push(new GhostRenderer(ctx, tileSize));
+});
+
+// Create a pacman renderer for rendering pacman and its lives left
+var pacmanRenderer = new PacmanRenderer(ctx, tileSize);
+
 
 /* Create a new Game */
 var myGame = new Game(maze, function (myMaze) {
     mazeRenderer.renderMaze(myMaze);
-    ghostRenderer1.render(this.ghosts[0], pacman.energizerActive > 0, pacman.energizerActive < 2 * 60);
-    ghostRenderer2.render(this.ghosts[1], pacman.energizerActive > 0, pacman.energizerActive < 2 * 60);
-    ghostRenderer3.render(this.ghosts[2], pacman.energizerActive > 0, pacman.energizerActive < 2 * 60);
-    ghostRenderer4.render(this.ghosts[3], pacman.energizerActive > 0, pacman.energizerActive < 2 * 60);
-    pacmanRenderer.render(this.pacman)
+
+    ghosts.forEach(function(ghost, index) {
+        ghostRenderers[index].render(ghost, pacman.energizerActive > 0, pacman.energizerActive < 2 * 60)
+    });
+
+    pacmanRenderer.render(pacman)
 });
 
 var fps = 60;

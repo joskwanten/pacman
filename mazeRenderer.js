@@ -1,4 +1,4 @@
-function mazeRenderer(ctx, tileSize) {
+function MazeRenderer(ctx, tileSize) {
     
     var drawDoubleTopLeft = function (context, tileSize, offsetX, offsetY) {
         context.beginPath();
@@ -380,7 +380,7 @@ function mazeRenderer(ctx, tileSize) {
                     case ElementIDs.ENERGIZER:
                         drawEnergizer(ctx, tileSize, x * tileSize, y * tileSize);
                         break;
-                    case ElementIDs.PILL:
+                    case ElementIDs.PELLET:
                         drawPoint(ctx, tileSize, x * tileSize, y * tileSize);
                         break;
                 }

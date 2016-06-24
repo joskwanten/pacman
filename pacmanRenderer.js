@@ -1,4 +1,4 @@
-function pacmanRenderer(context, tileSize) {
+function PacmanRenderer(context, tileSize) {
 
 
     var mouthOpen = 0;
@@ -27,25 +27,6 @@ function pacmanRenderer(context, tileSize) {
 
         this.x = pacman.x - tileSize / 2;
         this.y = pacman.y - tileSize / 2;
-
-
-        /*// Draw pacman eyes
-        ctx.beginPath();
-        ctx.arc(this.x + (18 / 64) * pacmanSize, this.y + (28 / 64) * pacmanSize, (7 / 64) * pacmanSize, 0, 2 * Math.PI, false);
-        ctx.fillStyle = 'white';
-        ctx.fill();
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = '#003300';
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.arc(this.x + (42 / 64) * pacmanSize, this.y + (28 / 64) * pacmanSize, (7 / 64) * pacmanSize, 0, 2 * Math.PI, false);
-        ctx.fillStyle = 'white';
-        ctx.fill();
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = '#003300';
-        ctx.stroke();
-*/
 
         var offset = 0;
 
@@ -88,6 +69,33 @@ function pacmanRenderer(context, tileSize) {
         ctx.strokeStyle = '#003300';
         ctx.stroke();
 
+        
+        for(var i = 0; i < pacman.lifesLeft; i++) {
+
+            var leftLifeX = tileSize * 2 * i;
+            var leftLifeY = tileSize * 34;
+            
+            ctx.beginPath();
+            ctx.moveTo(leftLifeX  + pacmanSize / 2, leftLifeY + pacmanSize /2);
+
+            ctx.arc(
+                leftLifeX + pacmanSize / 2,
+                leftLifeY  + pacmanSize / 2 ,
+                pacmanSize / 2.25,
+                (1 + (0.25)) * Math.PI,
+                (1 + (1.75))  * Math.PI,
+                false);
+
+            ctx.closePath();
+            ctx.fillStyle = 'yellow';
+            ctx.fill();
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = '#003300';
+            ctx.stroke();
+        }
+
         animateElements();
     }
+    
+    
 }
