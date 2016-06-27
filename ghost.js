@@ -72,7 +72,7 @@ function Ghost(id, name, color, character, maze, tileSize) {
 
         // Pinky its target is four positions in front of pacman
         if (this.name == "PINKY") {
-            switch(this.direction) {
+            switch(pacmanDirection) {
                 case "up" :
                     targetV -= 4;
                 case "down" :
@@ -89,7 +89,7 @@ function Ghost(id, name, color, character, maze, tileSize) {
             var tempTargetX = 0;
             var tempTargetY = 0;
 
-            switch(this.direction) {
+            switch(pacmanDirection) {
                 case "up" :
                     tempTargetY -= 2;
                 case "down" :
