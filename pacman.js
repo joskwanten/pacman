@@ -13,7 +13,7 @@ function Pacman(maze, tileSize, ghosts) {
 
     this.x = horizontalTiles / 2 * tileSize;
     this.y = 20 * tileSize;
-    this.pillsEaten = 0;
+    this.nrOfPelletsEaten = 0;
     this.dieing = 0;
     this.dieingFrames = 120;
 	
@@ -60,7 +60,7 @@ function Pacman(maze, tileSize, ghosts) {
             this.pointInMazeV = this.y / tileSize;
 
             if (maze[this.pointInMazeV * horizontalTiles + this.pointInMazeH] == ElementIDs.PELLET  ) {				
-                this.pillsEaten += 1;
+                this.nrOfPelletsEaten += 1;
 				this.pelletEaten();
                 maze[this.pointInMazeV * horizontalTiles + this.pointInMazeH] = 88;
             }

@@ -7,6 +7,9 @@ function Ghost(id, name, color, character, maze, tileSize) {
     // speed in frames to travel to the next tile
     this.speed = 8;
 
+    this.blinkyX = 0;
+    this.blinkyY = 0;
+
 
     this.pointInMazeV = verticalTiles / 2;
     this.pointInMazeH = horizontalTiles / 2;
@@ -63,21 +66,38 @@ function Ghost(id, name, color, character, maze, tileSize) {
     }
 
 
-    this.chaseAI = function(pacmanH, pacmanV, allowedDirection) {
-        var targetX = this.pointInMazeH;
-        var targetY = this.pointInMazeV;
+    this.chaseAI = function(pacmanH, pacmanV, pacmanDirection, allowedDirection) {
+        var targetH = pacmanH;
+        var targetV = pacmanV;
+
+        // Pinky its target is four positions in front of pacman
+        if (this.name == "PINKY") {
+            switch(this.direction) {
+                case "up" :
+                    targetV -= 4;
+                case "down" :
+                    targetV += 4;
+                case "left" :
+                    targetH -= 4;
+                case "down" :
+                    targetH += 4;
+            }
+        }
 
         // Inky its target is four positions in front of pacman
         if (this.name == "INKY") {
+            var tempTargetX = 0;
+            var tempTargetY = 0;
+
             switch(this.direction) {
                 case "up" :
-                    targetY -= 4;
+                    tempTargetY -= 2;
                 case "down" :
-                    targetY += 4;
+                    tempTargetY += 2;
                 case "left" :
-                    targetX -= 4;
+                    tempTargetX -= 2;
                 case "down" :
-                    targetX += 4;
+                    tempTargetX += 2;
             }
         }
 
@@ -104,28 +124,28 @@ function Ghost(id, name, color, character, maze, tileSize) {
             // or else it will select the first allowed option
             switch(index) {
                 case "up":
-                    newDistance = Math.pow(Math.abs(targetY - 1 - pacmanV), 2) + Math.pow(Math.abs(targetX - pacmanH), 2);
+                    newDistance = Math.pow(Math.abs(_this.pointInMazeV - 1 - targetV), 2) + Math.pow(Math.abs(_this.pointInMazeH - targetH), 2);
                     if (newDistance < distance) {
                         direction = "up";
                         distance = newDistance;
                     }
                     break;
                 case "down":
-                    newDistance = Math.pow(Math.abs(targetY + 1 - pacmanV), 2) + Math.pow(Math.abs(targetX - pacmanH), 2);
+                    newDistance = Math.pow(Math.abs(_this.pointInMazeV + 1 - targetV), 2) + Math.pow(Math.abs(_this.pointInMazeH - targetH), 2);
                     if (newDistance < distance) {
                         direction = "down";
                         distance = newDistance;
                     }
                     break;
                 case "left":
-                    newDistance = Math.pow(Math.abs(targetY - pacmanV), 2) + Math.pow(Math.abs(targetX - 1 - pacmanH), 2);
+                    newDistance = Math.pow(Math.abs(_this.pointInMazeV - targetV), 2) + Math.pow(Math.abs(_this.pointInMazeH - 1 - targetH), 2);
                     if (newDistance < distance){
                         direction = "left";
                         distance = newDistance
                     }
                     break;
                 case "right":
-                    newDistance = Math.pow(Math.abs(targetY - pacmanV), 2) + Math.pow(Math.abs(targetY + 1 - pacmanH), 2);
+                    newDistance = Math.pow(Math.abs(_this.pointInMazeV - targetV), 2) + Math.pow(Math.abs(_this.pointInMazeH + 1 - targetH), 2);
                     if (newDistance < distance) {
                         direction = "right";
                         distance = newDistance;
@@ -138,7 +158,7 @@ function Ghost(id, name, color, character, maze, tileSize) {
 
     }
 
-    this.update = function (pacmanH, pacmanV) {
+    this.update = function (pacmanH, pacmanV, pacmanDirection, nrOfPelletsEaten) {
         // No updates when frozen.
         if (freeze) {
             return;
@@ -171,14 +191,24 @@ function Ghost(id, name, color, character, maze, tileSize) {
                 allowedDirections.push("right");
             }
 
+            // INKY leaves the ghosthouse after eating 30 pellets
+            if (this.name == "INKY" && nrOfPelletsEaten < 30 && allowedDirections.indexOf("up") >= 0) {
+                allowedDirections.splice(allowedDirections.indexOf("up"), 1);
+            }
+
             if (this.name != "LBLINKY") {
-                this.direction = this.chaseAI(pacmanH, pacmanV, allowedDirections)
+                this.direction = this.chaseAI(pacmanH, pacmanV, pacmanDirection, allowedDirections)
             } else {
                 if (upAllowed && this.direction == 'up' || downAllowed && this.direction == 'down' || leftAllowed && this.direction == 'left' || rightAllowed && this.direction == 'right') {
                     // do nothing
                 } else {
                     this.direction = allowedDirections[Math.floor((Math.random() * allowedDirections.length))];
                 }
+            }
+
+            if (this.name == 'BLINKY') {
+                this.blinkyX = this.pointInMazeH;
+                this.blinkyY = this.pointInMazeV;
             }
         }
 
