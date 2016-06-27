@@ -16,11 +16,14 @@ function Pacman(maze, tileSize, ghosts) {
     this.pillsEaten = 0;
     this.dieing = 0;
     this.dieingFrames = 120;
+	
+	// A callback an be assigned to this function
+	this.pelletEaten = function(){};
 
     // Number of frames an energizer is active
     this.energizerActive = 0;
 
-    this.direction = "left";
+    this.direction = "stop";
 
     var keyStates = [];
 
@@ -43,10 +46,22 @@ function Pacman(maze, tileSize, ghosts) {
 
         if (this.x % tileSize == 0 && this.y % tileSize == 0) {
             this.pointInMazeH = this.x / tileSize;
+			
+			if (this.pointInMazeH < 0) {
+				this.pointInMazeH = horizontalTiles -1;
+				this.x = this.pointInMazeH  * tileSize
+			}
+			
+			if (this.pointInMazeH >= horizontalTiles) {
+				this.pointInMazeH = 0;
+				this.x = this.pointInMazeH  * tileSize
+			}
+				
             this.pointInMazeV = this.y / tileSize;
 
-            if (maze[this.pointInMazeV * horizontalTiles + this.pointInMazeH] == ElementIDs.PELLET  ) {
+            if (maze[this.pointInMazeV * horizontalTiles + this.pointInMazeH] == ElementIDs.PELLET  ) {				
                 this.pillsEaten += 1;
+				this.pelletEaten();
                 maze[this.pointInMazeV * horizontalTiles + this.pointInMazeH] = 88;
             }
 
@@ -57,8 +72,8 @@ function Pacman(maze, tileSize, ghosts) {
 
             var upAllowed = this.pointInMazeV > 0 ? maze[(this.pointInMazeV - 1) * horizontalTiles + this.pointInMazeH] > 63 : false;
             var downAllowed = this.pointInMazeV < verticalTiles - 1 ? maze[(this.pointInMazeV + 1) * horizontalTiles + this.pointInMazeH] > 63 : false;
-            var leftAllowed = this.pointInMazeH > 0 ? maze[this.pointInMazeV * horizontalTiles + (this.pointInMazeH - 1)] > 63 : false;
-            var rightAllowed = this.pointInMazeH < horizontalTiles - 1 ? maze[this.pointInMazeV * horizontalTiles + this.pointInMazeH + 1] > 63 : false;
+            var leftAllowed = this.pointInMazeH == 0 || maze[this.pointInMazeV * horizontalTiles + (this.pointInMazeH - 1)] > 63;
+            var rightAllowed = this.pointInMazeH == horizontalTiles -1 || maze[this.pointInMazeV * horizontalTiles + this.pointInMazeH + 1] > 63;
 
 
             if (keyStates.indexOf(38) >= 0 && upAllowed) // Up
@@ -100,6 +115,7 @@ function Pacman(maze, tileSize, ghosts) {
 
             var _this = this;
             ghosts.forEach(function (ghost) {
+				/*
                 // Ghost and Pacman are both 2 * tileSize
                 var gx1 = ghost.x - tileSize / 2; var gx2 = gx1 + 1.5 * tileSize;
                 var gy1 = ghost.y - tileSize / 2; var gy2 = gy1 + 1.5 * tileSize;
@@ -115,7 +131,15 @@ function Pacman(maze, tileSize, ghosts) {
                     ghosts.forEach(function(ghost) {
                         ghost.freezeGhost();
                     });
-                }
+                }*/
+				if (ghost.pointInMazeV == _this.pointInMazeV && ghost.pointInMazeH == _this.pointInMazeH) {
+					_this.dieing = _this.dieingFrames;
+
+                    // Freeze ghosts
+                    ghosts.forEach(function(ghost) {
+                        ghost.freezeGhost();
+					});
+				}
             });
         }
 

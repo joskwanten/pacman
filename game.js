@@ -1,7 +1,7 @@
 'use strict'
 
 /* Width and Height */
-var W = 896, H = 1152, tileSize = 32, horizontalTiles = 28, verticalTiles = 36;
+var W = 896, H = 1152, tileSize = 24, horizontalTiles = 28, verticalTiles = 36;
 
 /* List of ids that can be used in the tiles */
 var ElementIDs = {
@@ -48,6 +48,12 @@ ghosts.push(new Ghost(ElementIDs.INKY, "INKY", "blue", "BASHFUL", maze, tileSize
 ghosts.push(new Ghost(ElementIDs.CLYDE, "CLYDE", "green", "POKEY", maze, tileSize));
 
 var pacman = new Pacman(maze, tileSize, ghosts);
+
+var sound = new Sound();
+
+pacman.pelletEaten = function() {
+	sound.eatPellet();
+}
 
 function Game(mazeData, renderFunction) {
     this.maze = mazeData;
