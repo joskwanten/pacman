@@ -54,18 +54,29 @@ function Ghost(id, name, color, character, maze, tileSize) {
         return direction;
     }
 
+    function compareVectors(x1, y1, x2, y2) {
+
+        var l1 = x1 * x1 + y1 * y1;
+        var l2 = x2 * x2 + y2 * y2;
+        return (l1 > l2) ? 1 : (l1 < l2) ? -1 : 0;
+
+    }
+
 
     this.blinkyAI = function(pacmanH, pacmanV, allowedDirection) {
         // Fallback if no good direction can be found
         var direction = allowedDirection[0];
 
         if (allowedDirection.length > 1) {
-            if (allowedDirection.indexOf(opposite(this.direction))) {
-                allowedDirection.splice(allowedDirection.indexOf(opposite(this.direction)));
+            if (allowedDirection.indexOf(opposite(this.direction)) >= 0) {
+                allowedDirection.splice(allowedDirection.indexOf(opposite(this.direction)), 1);
             }
         }
 
-        var distance = 100;
+        // Never go back
+        direction = allowedDirection[0];
+
+        var distance = 10000;
         var newDistance = 0;
 
         var _this = this;
@@ -76,29 +87,29 @@ function Ghost(id, name, color, character, maze, tileSize) {
             // or else it will select the first allowed option
             switch(index) {
                 case "up":
-                    newDistance = Math.abs(_this.pointInMazeV - 1 - pacmanV)
-                    if (newDistance < distance && newDistance < Math.abs( _this.pointInMazeV - pacmanV)) {
+                    newDistance = Math.pow(Math.abs(_this.pointInMazeV - 1 - pacmanV), 2) + Math.pow(Math.abs(_this.pointInMazeH - pacmanH), 2);
+                    if (newDistance < distance) {
                         direction = "up";
                         distance = newDistance;
                     }
                     break;
                 case "down":
-                    newDistance = Math.abs(_this.pointInMazeV + 1 - pacmanV)
-                    if (newDistance < distance && newDistance < Math.abs( _this.pointInMazeV - pacmanV )) {
+                    newDistance = Math.pow(Math.abs(_this.pointInMazeV + 1 - pacmanV), 2) + Math.pow(Math.abs(_this.pointInMazeH - pacmanH), 2);
+                    if (newDistance < distance) {
                         direction = "down";
                         distance = newDistance;
                     }
                     break;
                 case "left":
-                    newDistance = Math.abs(_this.pointInMazeH - 1 - pacmanH)
-                    if (newDistance < distance && newDistance < Math.abs( _this.pointInMazeH - pacmanH )){
+                    newDistance = Math.pow(Math.abs(_this.pointInMazeV - pacmanV), 2) + Math.pow(Math.abs(_this.pointInMazeH - 1 - pacmanH), 2);
+                    if (newDistance < distance){
                         direction = "left";
                         distance = newDistance
                     }
                     break;
                 case "right":
-                    newDistance = Math.abs(_this.pointInMazeH + 1 - pacmanH)
-                    if (newDistance < distance && newDistance < Math.abs(_this.pointInMazeH - pacmanH)) {
+                    newDistance = Math.pow(Math.abs(_this.pointInMazeV - pacmanV), 2) + Math.pow(Math.abs(_this.pointInMazeH + 1 - pacmanH), 2);
+                    if (newDistance < distance) {
                         direction = "right";
                         distance = newDistance;
                     }
@@ -143,7 +154,7 @@ function Ghost(id, name, color, character, maze, tileSize) {
                 allowedDirections.push("right");
             }
 
-            if (this.name == "BLINKY") {
+            if (this.name != "LBLINKY") {
                 this.direction = this.blinkyAI(pacmanH, pacmanV, allowedDirections)
             } else {
                 if (upAllowed && this.direction == 'up' || downAllowed && this.direction == 'down' || leftAllowed && this.direction == 'left' || rightAllowed && this.direction == 'right') {
