@@ -4,36 +4,60 @@ function Sound() {
 	var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 	// create Oscillator node
-	var oscillator = audioCtx.createOscillator();
+	var oscillator1 = audioCtx.createOscillator();
 
 	// create Oscillator node
 	var oscillator2 = audioCtx.createOscillator();
 
+	// create another Oschillator node
+	var oscillator3 = audioCtx.createOscillator();
+
 	// create Gain node
-	var gain = audioCtx.createGain();
+	var gain1 = audioCtx.createGain();
 
 	// create Gain node
 	var gain2 = audioCtx.createGain();
 
-	oscillator.type = 'square';
-	oscillator.frequency.value = 400;
-	oscillator.connect(gain);
-	oscillator2.connect(gain2);
-	gain2.connect(oscillator.frequency)
+	// create Gain node
+	var gain3 = audioCtx.createGain();
 
-	gain.connect(audioCtx.destination);
-	oscillator.start();
-	oscillator2.start();
-	gain2.gain.value = 100;
-	oscillator2.type = 'triangle';
+	// Create a filter to filter the signal of oscillator 1
+	var biquadFilter = audioCtx.createBiquadFilter();
+
+	oscillator1.type = 'sawtooth';
+	oscillator1.frequency.value = 400;
+	oscillator1.connect(gain1);
+	gain1.connect(biquadFilter);
+
+	biquadFilter.frequency.value = 1000;
+	biquadFilter.Q.value = 10;
+	biquadFilter.connect(audioCtx.destination);
+
+	// LFO for frequency of Oscillator1
+	oscillator2.connect(gain2);
+	gain2.connect(oscillator1.frequency)
+	gain2.gain.value = 110;
+	oscillator2.type = 'square';
 	oscillator2.frequency.value = 20;
+
+	//
+	oscillator3.type = 'sine';
+	oscillator3.frequency.value = 2;
+	oscillator3.connect(gain3);
+	gain3.gain.value = 700;
+	gain3.connect(biquadFilter.frequency);
+
+	// Start the oscillators
+	oscillator1.start();
+	oscillator2.start();
+	oscillator3.start();
 	
-	gain.gain.value = 0;
+	gain1.gain.value = 0;
 
 	this.eatPellet = function() {
-		oscillator.frequency.setValueAtTime(200, audioCtx.currentTime);
-		oscillator2.frequency.setValueAtTime(5, audioCtx.currentTime);
-		gain.gain.setValueAtTime(1, audioCtx.currentTime + 0); 
-		gain.gain.setValueAtTime(0, audioCtx.currentTime + 0.05); 
+		oscillator1.frequency.setValueAtTime(220, audioCtx.currentTime);
+		oscillator2.frequency.setValueAtTime(2, audioCtx.currentTime);
+		gain1.gain.setValueAtTime(1, audioCtx.currentTime + 0);
+		gain1.gain.setValueAtTime(0, audioCtx.currentTime + 0.05);
 	}
 }

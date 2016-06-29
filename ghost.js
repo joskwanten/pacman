@@ -7,12 +7,19 @@ function Ghost(id, name, color, character, maze, tileSize) {
     // speed in frames to travel to the next tile
     this.speed = 8;
 
-    this.blinkyX = 0;
-    this.blinkyY = 0;
+    this.blinkyH = 0;
+    this.blinkyv = 0;
 
-
+    // Default in the middle of the screen.
     this.pointInMazeV = verticalTiles / 2;
     this.pointInMazeH = horizontalTiles / 2;
+
+    // We start in scatter mode
+    this.mode = "scatter";
+
+    // Counts the amount of frames (we assume a framerate of 60fps) and use this
+    // counter for timed behaviour (Scatter vs. Chase mode)
+    var frameCounter = 0;
 
     switch (name) {
         case "CLYDE":
@@ -86,19 +93,35 @@ function Ghost(id, name, color, character, maze, tileSize) {
 
         // Inky its target is four positions in front of pacman
         if (this.name == "INKY") {
-            var tempTargetX = 0;
-            var tempTargetY = 0;
 
             switch(pacmanDirection) {
                 case "up" :
-                    tempTargetY -= 2;
+                    targetV -= 2;
                 case "down" :
-                    tempTargetY += 2;
+                    targetV += 2;
                 case "left" :
-                    tempTargetX -= 2;
+                    targetH -= 2;
                 case "down" :
-                    tempTargetX += 2;
+                    targetH += 2;
             }
+
+            targetH = targetH + 2 * (targetH - this.blinkyH);
+            targetV = targetV + 2 * (targetV - this.blinkyH);
+        }
+
+        if (this.mode == 'scatter' && this.name == 'BLINKY') {
+            targetH = 26;
+            targetV = 6;
+        }
+
+        if (this.mode == 'scatter' && this.name == 'INKY') {
+
+        }
+        if (this.mode == 'scatter' && this.name == 'PINKY') {
+
+        }
+        if (this.mode == 'scatter' && this.name == 'CLYDE') {
+
         }
 
 
@@ -159,6 +182,28 @@ function Ghost(id, name, color, character, maze, tileSize) {
     }
 
     this.update = function (pacmanH, pacmanV, pacmanDirection, nrOfPelletsEaten) {
+        frameCounter++;
+
+        // We enter chase mode after 7 seconds for 20 seconds until 27 seconds etc.
+        // we end in chase mode
+        var modesPerTime = [
+                            {time: 0, mode: 'scatter'},
+                            {time: 7, mode: 'chase'},
+                            {time: 20, mode: 'scatter'},
+                            {time: 27, mode: 'chase'},
+                            {time: 47, mode: 'scatter'},
+                            {time: 52, mode: 'chase'},
+                            {time: 72, mode: 'scatter'},
+                            {time: 78, mode: 'chase'}
+                            ];
+
+        var _this = this;
+        modesPerTime.forEach(function(timemode) {
+            if (frameCounter /60 > timemode.time) {
+                _this.mode = timemode.mode;
+            }
+        });
+
         // No updates when frozen.
         if (freeze) {
             return;
@@ -167,6 +212,11 @@ function Ghost(id, name, color, character, maze, tileSize) {
         if (this.x % tileSize == 0 && this.y % tileSize == 0) {
             this.pointInMazeH = this.x / tileSize;
             this.pointInMazeV = this.y / tileSize;
+            // Store BLINKY its actual position (INKY needs it for its position)
+            if (this.name == 'BLINKY') {
+                this.blinkyH = this.pointInMazeH;
+                this.blinkyV = this.pointInMazeV;
+            }
 
             var upAllowed = this.pointInMazeV > 0 ? maze[(this.pointInMazeV - 1) * horizontalTiles + this.pointInMazeH] > 63 : false;
             var downAllowed = this.pointInMazeV < verticalTiles - 1 ? maze[(this.pointInMazeV + 1) * horizontalTiles + this.pointInMazeH] > 63 : false;
@@ -196,6 +246,11 @@ function Ghost(id, name, color, character, maze, tileSize) {
                 allowedDirections.splice(allowedDirections.indexOf("up"), 1);
             }
 
+            // CLYDE leaves the ghosthouse after eating 75 pellets (about 30%)
+            if (this.name == "CLYDE" && nrOfPelletsEaten < 75 && allowedDirections.indexOf("up") >= 0) {
+                allowedDirections.splice(allowedDirections.indexOf("up"), 1);
+            }
+
             if (this.name != "LBLINKY") {
                 this.direction = this.chaseAI(pacmanH, pacmanV, pacmanDirection, allowedDirections)
             } else {
@@ -204,11 +259,6 @@ function Ghost(id, name, color, character, maze, tileSize) {
                 } else {
                     this.direction = allowedDirections[Math.floor((Math.random() * allowedDirections.length))];
                 }
-            }
-
-            if (this.name == 'BLINKY') {
-                this.blinkyX = this.pointInMazeH;
-                this.blinkyY = this.pointInMazeV;
             }
         }
 
