@@ -111,17 +111,20 @@ function Ghost(id, name, color, character, maze, tileSize) {
 
         if (this.mode == 'scatter' && this.name == 'BLINKY') {
             targetH = 26;
-            targetV = 6;
+            targetV = 7;
         }
 
         if (this.mode == 'scatter' && this.name == 'INKY') {
-
+            targetH = 27;
+            targetV = 31;
         }
         if (this.mode == 'scatter' && this.name == 'PINKY') {
-
+            targetH = 3;
+            targetV = 7;
         }
         if (this.mode == 'scatter' && this.name == 'CLYDE') {
-
+            targetH = 7;
+            targetV = 31;
         }
 
 
