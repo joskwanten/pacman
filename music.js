@@ -34,7 +34,7 @@ function  playTune(audioCtx) {
     c3gain5.connect(c3biquadFilter.frequency);
 
     c3biquadFilter.frequency.value = 1000;
-    c3biquadFilter.Q.value = 20;
+    c3biquadFilter.Q.value = 10;
     c3biquadFilter.connect(audioCtx.destination);
 
     c3gain1.gain.value = 0;
@@ -69,26 +69,26 @@ function  playTune(audioCtx) {
         c3oscillator2.frequency.setValueAtTime(frequency * 1.01, time);
         c3oscillator3.frequency.setValueAtTime(frequency * .99, time);
         c3oscillator4.frequency.setValueAtTime(frequency / 2, time);
-        c3oscillator5.frequency.setValueAtTime(2, time);
+        c3oscillator5.frequency.setValueAtTime(.5, time);
 
-        c3gain1.gain.linearRampToValueAtTime(0.3 * relativeVolume * 1, time + attack);
-        c3gain1.gain.linearRampToValueAtTime(0.3 * relativeVolume * decayLevel, time + decay);
-        c3gain1.gain.linearRampToValueAtTime(0.3 * relativeVolume * sustainLevel, time + sustain);
+        c3gain1.gain.linearRampToValueAtTime(0.2 * relativeVolume * 1, time + attack);
+        c3gain1.gain.linearRampToValueAtTime(0.2 * relativeVolume * decayLevel, time + decay);
+        c3gain1.gain.linearRampToValueAtTime(0.2 * relativeVolume * sustainLevel, time + sustain);
         c3gain1.gain.linearRampToValueAtTime(0, time + release);
 
-        c3gain2.gain.linearRampToValueAtTime(0.1 * relativeVolume / 3 * 1, time + attack);
-        c3gain2.gain.linearRampToValueAtTime(0.1 * relativeVolume * decayLevel, time + decay);
-        c3gain2.gain.linearRampToValueAtTime(0.1 * relativeVolume * sustainLevel, time + sustain);
+        c3gain2.gain.linearRampToValueAtTime(0.2 * relativeVolume / 3 * 1, time + attack);
+        c3gain2.gain.linearRampToValueAtTime(0.2 * relativeVolume * decayLevel, time + decay);
+        c3gain2.gain.linearRampToValueAtTime(0.2 * relativeVolume * sustainLevel, time + sustain);
         c3gain2.gain.linearRampToValueAtTime(0, time + release);
 
-        c3gain3.gain.linearRampToValueAtTime(0.05 * relativeVolume * 1, time + attack);
-        c3gain3.gain.linearRampToValueAtTime(0.05 * relativeVolume * decayLevel, time + decay);
-        c3gain3.gain.linearRampToValueAtTime(0.05 * relativeVolume * sustainLevel, time + sustain);
+        c3gain3.gain.linearRampToValueAtTime(0.2 * relativeVolume * 1, time + attack);
+        c3gain3.gain.linearRampToValueAtTime(0.2 * relativeVolume * decayLevel, time + decay);
+        c3gain3.gain.linearRampToValueAtTime(0.2 * relativeVolume * sustainLevel, time + sustain);
         c3gain3.gain.linearRampToValueAtTime(0, time + release);
 
-        c3gain4.gain.linearRampToValueAtTime(0.3 * relativeVolume * 1, time + attack);
-        c3gain4.gain.linearRampToValueAtTime(0.3 * relativeVolume * decayLevel, time + decay);
-        c3gain4.gain.linearRampToValueAtTime(0.3 * relativeVolume * sustainLevel, time + sustain);
+        c3gain4.gain.linearRampToValueAtTime(0.2 * relativeVolume * 1, time + attack);
+        c3gain4.gain.linearRampToValueAtTime(0.2 * relativeVolume * decayLevel, time + decay);
+        c3gain4.gain.linearRampToValueAtTime(0.2 * relativeVolume * sustainLevel, time + sustain);
         c3gain4.gain.linearRampToValueAtTime(0, time + release);
     });
 
