@@ -1,7 +1,4 @@
-function Sound() {
-
-	// create web audio api context
-	var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+function Sound(audioCtx) {
 
 	// create Oscillator node
 	var oscillator1 = audioCtx.createOscillator();

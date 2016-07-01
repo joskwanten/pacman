@@ -49,7 +49,10 @@ ghosts.push(new Ghost(ElementIDs.CLYDE, "CLYDE", "green", "POKEY", maze, tileSiz
 
 var pacman = new Pacman(maze, tileSize, ghosts);
 
-var sound = new Sound();
+// create web audio api context
+var audioCtx = new window.AudioContext();
+
+var sound = new Sound(audioCtx);
 
 pacman.pelletEaten = function() {
 	sound.eatPellet();
@@ -100,6 +103,8 @@ var myGame = new Game(maze, function (myMaze) {
 
     pacmanRenderer.render(pacman)
 });
+
+playTune(audioCtx);
 
 var fps = 60;
 setInterval(function () {
