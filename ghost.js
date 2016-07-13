@@ -17,9 +17,19 @@ function Ghost(id, name, color, character, maze, tileSize) {
     // We start in scatter mode
     this.mode = "scatter";
 
+    // If ghost has died and is has reached the ghosthous
+    // the recovering frame counter is set to recover for n frames of time
+    this.recoveringFrames = 0;
+
+
+    ghostHouseH = horizontalTiles / 2;
+    ghostHouseV = verticalTiles / 2 - 1;
+
     // Counts the amount of frames (we assume a framerate of 60fps) and use this
     // counter for timed behaviour (Scatter vs. Chase mode)
     var frameCounter = 0;
+
+    this.killed = false;
 
     switch (name) {
         case "CLYDE":
@@ -72,6 +82,9 @@ function Ghost(id, name, color, character, maze, tileSize) {
 
     }
 
+    this.kill = function() {
+        this.killed = true;
+    };
 
     this.chaseAI = function(pacmanH, pacmanV, pacmanDirection, allowedDirection) {
         var targetH = pacmanH;
@@ -89,7 +102,7 @@ function Ghost(id, name, color, character, maze, tileSize) {
                 case "down" :
                     targetH += 4;
             }
-        }
+        };
 
         // Inky its target is four positions in front of pacman
         if (this.name == "INKY") {
@@ -127,6 +140,11 @@ function Ghost(id, name, color, character, maze, tileSize) {
             targetV = 31;
         }
 
+
+        if (this.killed == true) {
+            targetH = ghostHouseH;
+            targetV = ghostHouseV;
+        }
 
         var direction = allowedDirection[0];
 
@@ -187,6 +205,10 @@ function Ghost(id, name, color, character, maze, tileSize) {
     this.update = function (pacmanH, pacmanV, pacmanDirection, nrOfPelletsEaten) {
         frameCounter++;
 
+        if (this.recoveringFrames > 0) {
+            this.recoveringFrames--;
+        }
+
         // We enter chase mode after 7 seconds for 20 seconds until 27 seconds etc.
         // we end in chase mode
         var modesPerTime = [
@@ -215,6 +237,13 @@ function Ghost(id, name, color, character, maze, tileSize) {
         if (this.x % tileSize == 0 && this.y % tileSize == 0) {
             this.pointInMazeH = this.x / tileSize;
             this.pointInMazeV = this.y / tileSize;
+
+            if (this.killed && this.pointInMazeH == ghostHouseH && this.pointInMazeV == ghostHouseV) {
+                // Ghost has reached ghosthouse. Now it can come back to life
+                this.killed = false;
+                this.recoveringFrames = 5 * 60;
+            }
+
             // Store BLINKY its actual position (INKY needs it for its position)
             if (this.name == 'BLINKY') {
                 this.blinkyH = this.pointInMazeH;
@@ -251,6 +280,11 @@ function Ghost(id, name, color, character, maze, tileSize) {
 
             // CLYDE leaves the ghosthouse after eating 75 pellets (about 30%)
             if (this.name == "CLYDE" && nrOfPelletsEaten < 75 && allowedDirections.indexOf("up") >= 0) {
+                allowedDirections.splice(allowedDirections.indexOf("up"), 1);
+            }
+
+            // CLYDE leaves the ghosthouse after eating 75 pellets (about 30%)
+            if (this.recoveringFrames > 0 && allowedDirections.indexOf("up") >= 0) {
                 allowedDirections.splice(allowedDirections.indexOf("up"), 1);
             }
 

@@ -76,25 +76,28 @@ function GhostRenderer(context, tileSize) {
                 this.underoffup = true;
         }
 
-        ctx.beginPath();
-        ctx.moveTo(this.x + 0, this.y + tileSize);
-        ctx.bezierCurveTo(this.x + 0, this.y + 0, this.x + ghostSize, this.y + 0, this.x + ghostSize, this.y + tileSize);
-        //ctx.lineTo(this.x + 64, this.y + 48);
 
-        ctx.bezierCurveTo(this.x + this.underoff + 1 * ghostSize, this.y + ghostSize, this.x + this.underoff + 0.75 * ghostSize, this.y + ghostSize, this.x + 0.75 * ghostSize, this.y + 0.75 * ghostSize);
-        ctx.bezierCurveTo(this.x + this.underoff + 0.75 * ghostSize, this.y + ghostSize, this.x + this.underoff + 0.5 * ghostSize, this.y + ghostSize, this.x + 0.5 * ghostSize, this.y + 0.75 * ghostSize);
-        ctx.bezierCurveTo(this.x + this.underoff + 0.5 * ghostSize, this.y + ghostSize, this.x + this.underoff + 0.25 * ghostSize, this.y + ghostSize, this.x + 0.25 * ghostSize, this.y + 0.75 * ghostSize);
-        ctx.bezierCurveTo(this.x + this.underoff + 0.25 * ghostSize, this.y + ghostSize, this.x + this.underoff + 0 * ghostSize, this.y + ghostSize, this.x + 0 * ghostSize, this.y + 0.5 * ghostSize);
+        if(!ghost.killed || ghost.recoveringFrames > 0 && toggle) {
 
-        ctx.fillStyle = this.fill;
-        ctx.fill();
-        //ctx.lineTo(this.x + 0, this.y + 32);
-        ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(this.x + 0, this.y + tileSize);
+            ctx.bezierCurveTo(this.x + 0, this.y + 0, this.x + ghostSize, this.y + 0, this.x + ghostSize, this.y + tileSize);
+            //ctx.lineTo(this.x + 64, this.y + 48);
 
-        // line color
-        ctx.strokeStyle = ghost.color;
-        ctx.stroke();
+            ctx.bezierCurveTo(this.x + this.underoff + 1 * ghostSize, this.y + ghostSize, this.x + this.underoff + 0.75 * ghostSize, this.y + ghostSize, this.x + 0.75 * ghostSize, this.y + 0.75 * ghostSize);
+            ctx.bezierCurveTo(this.x + this.underoff + 0.75 * ghostSize, this.y + ghostSize, this.x + this.underoff + 0.5 * ghostSize, this.y + ghostSize, this.x + 0.5 * ghostSize, this.y + 0.75 * ghostSize);
+            ctx.bezierCurveTo(this.x + this.underoff + 0.5 * ghostSize, this.y + ghostSize, this.x + this.underoff + 0.25 * ghostSize, this.y + ghostSize, this.x + 0.25 * ghostSize, this.y + 0.75 * ghostSize);
+            ctx.bezierCurveTo(this.x + this.underoff + 0.25 * ghostSize, this.y + ghostSize, this.x + this.underoff + 0 * ghostSize, this.y + ghostSize, this.x + 0 * ghostSize, this.y + 0.5 * ghostSize);
 
+            ctx.fillStyle = this.fill;
+            ctx.fill();
+            //ctx.lineTo(this.x + 0, this.y + 32);
+            ctx.lineWidth = 1;
+
+            // line color
+            ctx.strokeStyle = ghost.color;
+            ctx.stroke();
+        }
         // Draw ghost eyes
         ctx.beginPath();
         ctx.arc(this.x + (18 / 64) * ghostSize, this.y + (28 / 64) * ghostSize, (7 / 64) * ghostSize, 0, 2 * Math.PI, false);
@@ -111,6 +114,7 @@ function GhostRenderer(context, tileSize) {
         ctx.lineWidth = 1;
         ctx.strokeStyle = '#003300';
         ctx.stroke();
+
 
         // Draw ghost pupils
         var offsetx = 0;

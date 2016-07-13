@@ -5,7 +5,7 @@ function PacmanRenderer(context, tileSize) {
     var mouthOpening = true;
     var lastDirection = "stop";
 
-    var animateElements = function() {
+    var animateElements = function () {
         mouthOpen += mouthOpening ? 1 : -1;
 
         if (mouthOpen == 7) {
@@ -21,9 +21,16 @@ function PacmanRenderer(context, tileSize) {
         context.lineWidth = 1;
     }
 
+    function renderPoints(pacman) {
+        context.font = "30px Arial";
+        context.fillStyle = "yellow";
+        context.fillText(String(pacman.points), 10, 50);
+    }
+
     var pacmanSize = tileSize * 2;
 
     this.render = function (pacman) {
+        renderPoints(pacman);
 
         this.x = pacman.x - tileSize / 2;
         this.y = pacman.y - tileSize / 2;

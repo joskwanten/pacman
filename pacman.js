@@ -16,12 +16,21 @@ function Pacman(maze, tileSize, ghosts) {
     this.nrOfPelletsEaten = 0;
     this.dieing = 0;
     this.dieingFrames = 120;
+
+    this.specialMessage = "";
+    this.specialMessageFrames = 0;
+    this.specialMessageLocation;
+
+    this.points = 0;
 	
 	// A callback an be assigned to this function
 	this.pelletEaten = function(){};
 
     // Number of frames an energizer is active
     this.energizerActive = 0;
+
+    // Points earned after eating ghosts (Reset after eating a new energizer)
+    this.ghostPointsPerEnergizer = 0;
 
     this.direction = "stop";
 
@@ -61,12 +70,14 @@ function Pacman(maze, tileSize, ghosts) {
 
             if (maze[this.pointInMazeV * horizontalTiles + this.pointInMazeH] == ElementIDs.PELLET  ) {				
                 this.nrOfPelletsEaten += 1;
+                this.points += 10;
 				this.pelletEaten();
                 maze[this.pointInMazeV * horizontalTiles + this.pointInMazeH] = 88;
             }
 
             if (maze[this.pointInMazeV * horizontalTiles + this.pointInMazeH] == ElementIDs.ENERGIZER  ) {
                 this.energizerActive = 5 * 60;
+                this.ghostPointsPerEnergizer = 0;
                 maze[this.pointInMazeV * horizontalTiles + this.pointInMazeH] = 88;
             }
 
@@ -133,12 +144,21 @@ function Pacman(maze, tileSize, ghosts) {
                     });
                 }*/
 				if (ghost.pointInMazeV == _this.pointInMazeV && ghost.pointInMazeH == _this.pointInMazeH) {
-					_this.dieing = _this.dieingFrames;
+                    if (_this.energizerActive > 0) {
+                        ghost.kill();
+                        _this.points += 200;
+                        _this.ghostPointsPerEnergizer += 200;
+                        _this.specialMessage = String(this.ghostPointsPerEnergizer);
+                        _this.specialMessageFrames = 120;
+                        _this.specialMessageLocation = {V: ghost.pointInMazeV, H: ghost.pointInMazeH};
+                    } else {
+                        _this.dieing = _this.dieingFrames;
 
-                    // Freeze ghosts
-                    ghosts.forEach(function(ghost) {
-                        ghost.freezeGhost();
-					});
+                        // Freeze ghosts
+                        ghosts.forEach(function (ghost) {
+                            ghost.freezeGhost();
+                        });
+                    }
 				}
             });
         }
