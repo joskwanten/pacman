@@ -77,7 +77,7 @@ function GhostRenderer(context, tileSize) {
         }
 
 
-        if(!ghost.killed || ghost.recoveringFrames > 0 && toggle) {
+        if(!ghost.killed || ghost.recoveryFrames > 0 && toggle) {
 
             ctx.beginPath();
             ctx.moveTo(this.x + 0, this.y + tileSize);
