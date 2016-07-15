@@ -54,8 +54,14 @@ var audioCtx = new window.AudioContext();
 
 var sound = new Sound(audioCtx);
 
+setTimeout(function() { sound.playSlowWow(); }, 4000);
+
 pacman.pelletEaten = function() {
 	sound.eatPellet();
+}
+
+pacman.ghostEaten = function() {
+    sound.playGhostEaten();
 }
 
 function Game(mazeData, renderFunction) {

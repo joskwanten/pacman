@@ -26,6 +26,9 @@ function Pacman(maze, tileSize, ghosts) {
 	// A callback an be assigned to this function
 	this.pelletEaten = function(){};
 
+    // A callback an be assigned to this function
+    this.ghostEaten = function(){};
+
     // Number of frames an energizer is active
     this.energizerActive = 0;
 
@@ -146,6 +149,7 @@ function Pacman(maze, tileSize, ghosts) {
 				if (ghost.pointInMazeV == _this.pointInMazeV && ghost.pointInMazeH == _this.pointInMazeH) {
                     if (_this.energizerActive > 0) {
                         ghost.kill();
+                        _this.ghostEaten();
                         _this.points += 200;
                         _this.ghostPointsPerEnergizer += 200;
                         _this.specialMessage = String(this.ghostPointsPerEnergizer);

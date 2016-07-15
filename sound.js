@@ -57,6 +57,94 @@ function Sound(audioCtx) {
 		gain1.gain.setValueAtTime(1, audioCtx.currentTime + 0);
 		gain1.gain.setValueAtTime(0, audioCtx.currentTime + 0.05);
 	}
+
+	// create Gain node
+	var slowWowGain1 = audioCtx.createGain();
+
+	this.playSlowWow = function() {
+		// create Oscillator node
+		var slowWowOscillator1 = audioCtx.createOscillator();
+
+		// create Oscillator node
+		var slowWowOscillator2 = audioCtx.createOscillator();
+
+		// create another Oschillator node
+		var slowWowOscillator3 = audioCtx.createOscillator();
+
+		// create Gain node
+		var slowWowGain2 = audioCtx.createGain();
+
+		// create Gain node
+		var slowWowGain3 = audioCtx.createGain();
+
+		// Create a filter to filter the signal of oscillator 1
+		var slowWowBiquadFilter = audioCtx.createBiquadFilter();
+
+		slowWowOscillator1.type = 'sine';
+		slowWowOscillator1.frequency.value = 200;
+		slowWowOscillator1.connect(slowWowGain1);
+		slowWowGain1.connect(slowWowBiquadFilter);
+
+		slowWowBiquadFilter.frequency.value = 1000;
+		slowWowBiquadFilter.Q.value = 10;
+		slowWowBiquadFilter.connect(audioCtx.destination);
+
+		// LFO for frequency of Oscillator1
+		slowWowOscillator2.connect(slowWowGain2);
+		slowWowGain2.connect(slowWowOscillator1.frequency)
+		slowWowGain2.gain.value = 100;
+		slowWowOscillator2.type = 'sine';
+		slowWowOscillator2.frequency.value = 2;
+
+		//
+		slowWowOscillator3.type = 'sine';
+		slowWowOscillator3.frequency.value = 2;
+		slowWowOscillator3.connect(slowWowGain3);
+		slowWowGain3.gain.value = 700;
+		slowWowGain3.connect(slowWowBiquadFilter.frequency);
+
+		// Start the oscillators
+		slowWowOscillator1.start();
+		slowWowOscillator2.start();
+		slowWowOscillator3.start();
+
+		slowWowGain1.gain.value = .3;
+	}
+
+	this.playGhostEaten = function() {
+		slowWowGain1.gain.setValueAtTime(0, audioCtx.currentTime);
+
+
+		// create Oscillator node
+		var dieOscillator1 = audioCtx.createOscillator();
+		var dieOscillator2 = audioCtx.createOscillator();
+		var dieGain1 = audioCtx.createGain();
+		var dieGain2 = audioCtx.createGain();
+
+		dieOscillator1.type = 'square';
+		dieOscillator1.frequency.value = 200;
+		dieOscillator1.connect(dieGain1);
+		dieGain1.connect(audioCtx.destination);
+
+		// LFO for frequency of Oscillator1
+		dieOscillator2.connect(dieGain2);
+		dieGain2.connect(dieOscillator1.frequency)
+		dieGain2.gain.value = 200;
+		dieOscillator2.type = 'sawtooth';
+		dieOscillator2.frequency.value = 2;
+
+		// Start the oscillators
+		dieOscillator1.start();
+		dieOscillator2.start();
+
+		dieGain1.gain.setValueAtTime(0, audioCtx.currentTime  + 0.5);
+		slowWowGain1.gain.setValueAtTime(0.3, audioCtx.currentTime + 0.5);
+
+	}
+
+	this.silentSlowWow = function() {
+		slowWowGain1.gain.setValueAtTime(0, audioCtx.currentTime + 0);
+	}
 }
 
 /* Sound for melody */
