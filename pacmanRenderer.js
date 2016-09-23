@@ -46,6 +46,10 @@ function PacmanRenderer(context, tileSize) {
             lastDirection = pacman.direction;
         }
 
+        if (pacman.dieing > 0) {
+            lastDirection = "stop";
+        }
+
         if (lastDirection == "up") {
             offset = 1.5;
         }

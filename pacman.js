@@ -11,8 +11,14 @@ function Pacman(maze, tileSize, ghosts) {
 
     this.livesLeft = 3;
 
-    this.x = horizontalTiles / 2 * tileSize;
-    this.y = 20 * tileSize;
+    this.reset =  function reset() {
+        this.x = horizontalTiles / 2 * tileSize;
+        this.y = 20 * tileSize;
+        this.direction = "stop";
+    }
+
+    this.reset();
+
     this.nrOfPelletsEaten = 0;
     this.dieing = 0;
     this.dieingFrames = 120;
@@ -34,8 +40,6 @@ function Pacman(maze, tileSize, ghosts) {
 
     // Points earned after eating ghosts (Reset after eating a new energizer)
     this.ghostPointsPerEnergizer = 0;
-
-    this.direction = "stop";
 
     var keyStates = [];
 
@@ -158,6 +162,8 @@ function Pacman(maze, tileSize, ghosts) {
                     } else {
                         _this.dieing = _this.dieingFrames;
 
+                        // Play some audio here
+
                         // Freeze ghosts
                         ghosts.forEach(function (ghost) {
                             ghost.freezeGhost();
@@ -169,12 +175,16 @@ function Pacman(maze, tileSize, ghosts) {
 
         // If dieing,
         if (this.dieing != 0) {
-
-            if(this.dieing == 1) {
-                this.livesLeft--;
-            }
-
             this.dieing--;
+
+            if(this.dieing == 0) {
+                this.livesLeft--;
+                this.reset();
+                // reset ghosts (if not game over)
+                ghosts.forEach(function (ghost) {
+                    ghost.resetGhost();
+                });
+            }
         }
     }
 

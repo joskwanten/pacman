@@ -32,24 +32,28 @@ function Ghost(id, name, color, character, maze, tileSize) {
 
     this.killed = false;
 
-    switch (name) {
-        case "CLYDE":
-            this.x = horizontalTiles / 2 * tileSize - 2 * tileSize;
-            this.y = 17 * tileSize;
-            break;
-        case "PINKY":
-            this.x = horizontalTiles / 2 * tileSize;
-            this.y = 17 * tileSize;
-            break;
-        case "INKY":
-            this.x = horizontalTiles / 2 * tileSize + 2 * tileSize;
-            this.y = 17 * tileSize;
-            break;
-        default :
-            this.x = horizontalTiles / 2 * tileSize;
-            this.y = 14 * tileSize;
-            break;
+    this.initialPosition = function initialPosition() {
+        switch (this.name) {
+            case "CLYDE":
+                this.x = horizontalTiles / 2 * tileSize - 2 * tileSize;
+                this.y = 17 * tileSize;
+                break;
+            case "PINKY":
+                this.x = horizontalTiles / 2 * tileSize;
+                this.y = 17 * tileSize;
+                break;
+            case "INKY":
+                this.x = horizontalTiles / 2 * tileSize + 2 * tileSize;
+                this.y = 17 * tileSize;
+                break;
+            default :
+                this.x = horizontalTiles / 2 * tileSize;
+                this.y = 14 * tileSize;
+                break;
+        }
     }
+
+    this.initialPosition();
 
     this.direction = "left";
 
@@ -57,6 +61,13 @@ function Ghost(id, name, color, character, maze, tileSize) {
 
     this.freezeGhost = function() {
         freeze = true;
+    }
+
+    this.resetGhost = function() {
+        frameCounter = 0;
+        freeze = false;
+        this.killed = false;
+        this.initialPosition();
     }
 
 
