@@ -47,7 +47,7 @@ function PacmanRenderer(context, tileSize) {
         }
 
         if (pacman.dieing > 0) {
-            lastDirection = "stop";
+            lastDirection = pacman.dieing == 1 ? "right" : "up";
         }
 
         if (lastDirection == "up") {
@@ -69,8 +69,8 @@ function PacmanRenderer(context, tileSize) {
             this.x + pacmanSize / 2,
             this.y  + pacmanSize / 2 ,
             pacmanSize / 2.25,
-            (offset + (0.25 - 0.25 * mouthOpen/ 7)) * Math.PI,
-                (offset + (1.75 + 0.25 * (mouthOpen/ 7)))  * Math.PI,
+            (offset + (0.25 - 0.25 * mouthOpen / 7)) * Math.PI,
+                (offset + (1.75 + 0.25 * (mouthOpen / 7)))  * Math.PI,
             false);
 
         ctx.closePath();
