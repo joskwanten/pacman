@@ -1,6 +1,8 @@
 'use strict'
 
 /* Width and Height */
+var baseW = 224, baseH = 288;
+
 var W = 896, H = 1152, tileSize = 24, horizontalTiles = 28, verticalTiles = 36;
 
 /* List of ids that can be used in the tiles */
@@ -47,7 +49,7 @@ ghosts.push(new Ghost(ElementIDs.PINKY, "PINKY", "yellow", "SPEEDY", maze, tileS
 ghosts.push(new Ghost(ElementIDs.INKY, "INKY", "blue", "BASHFUL", maze, tileSize));
 ghosts.push(new Ghost(ElementIDs.CLYDE, "CLYDE", "green", "POKEY", maze, tileSize));
 
-var pacman = new Pacman(maze, tileSize, ghosts);
+var pacman = new Pacman(maze, ghosts, tileSize);
 
 // create web audio api context
 var audioCtx = new window.AudioContext();
@@ -64,15 +66,19 @@ pacman.ghostEaten = function() {
     sound.playGhostEaten();
 }
 
+pacman.dies = function() {
+    sound.playPacmanDies();
+}
+
 function Game(mazeData, renderFunction) {
     this.maze = mazeData;
 
     this.update = function () {
         ghosts.forEach(function (ghost) {
-            ghost.update(pacman.pointInMazeH, pacman.pointInMazeV, pacman.direction, pacman.nrOfPelletsEaten);
+            ghost.update(pacman.pointInMazeH, pacman.pointInMazeV, pacman.direction, pacman.nrOfPelletsEaten, tileSize);
         })
 
-        pacman.update();
+        pacman.update(tileSize);
     }
 
     this.render = function () {
@@ -83,31 +89,64 @@ function Game(mazeData, renderFunction) {
 /* get the canvas context */
 var canvas = document.getElementById("gameCanvas");
 var ctx = canvas.getContext("2d");
+var resized = false;
+
+function resize() {
+    var width = window.innerWidth;
+    var height = window.innerHeight;
+    console.log("Height " + height);
+
+    var scale = Math.floor(height / 288);
+
+    tileSize = scale * 8;
+    width = scale * baseW;
+    height = scale * baseH;
+
+    console.log("Height " + height);
+
+    resized = true;
+    canvas.width = width;
+    canvas.height = height;
+    W = width;
+    H = height;
+
+    ghosts.forEach(function(g) {g.setNewTileSize(tileSize)});
+    pacman.setNewTileSize(tileSize);
+}
+
+// Set initial values
+resize();
+
+// Set pacman's initial position
+pacman.reset();
+ghosts.forEach(function(g) {g.initialPosition(); });
+
+// register the resize event handler to handle resizing
+window.addEventListener("resize", resize);
 
 /* Create the render-engine */
 var mazeRenderer = new MazeRenderer(ctx, tileSize);
 
-
 // The ghost renderer has some state, so we create a renderer per ghost
 var ghostRenderers = [];
 ghosts.forEach(function() {
-    ghostRenderers.push(new GhostRenderer(ctx, tileSize));
+    ghostRenderers.push(new GhostRenderer(ctx));
 });
 
 // Create a pacman renderer for rendering pacman and its lives left
-var pacmanRenderer = new PacmanRenderer(ctx, tileSize);
+var pacmanRenderer = new PacmanRenderer(ctx);
 
 
 /* Create a new Game */
 var myGame = new Game(maze, function (myMaze) {
-    
-    mazeRenderer.renderMaze(myMaze);
+    mazeRenderer.renderMaze(myMaze, resized, tileSize);
+    resized = false;
 
     ghosts.forEach(function(ghost, index) {
-        ghostRenderers[index].render(ghost, pacman.energizerActive > 0, pacman.energizerActive < 2 * 60)
+        ghostRenderers[index].render(ghost, pacman.energizerActive > 0, pacman.energizerActive < 2 * 60, tileSize)
     });
 
-    pacmanRenderer.render(pacman)
+    pacmanRenderer.render(pacman, tileSize)
 });
 
 playTune(audioCtx);

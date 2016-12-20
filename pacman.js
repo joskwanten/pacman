@@ -1,4 +1,5 @@
-function Pacman(maze, tileSize, ghosts) {
+function Pacman(maze, ghosts) {
+    var tileSize = 24;
 
     this.color = "yellow";
     this.maze = maze;
@@ -21,7 +22,7 @@ function Pacman(maze, tileSize, ghosts) {
 
     this.nrOfPelletsEaten = 0;
     this.dieing = 0;
-    this.dieingFrames = 120;
+    this.dieingFrames = 60;
 
     this.specialMessage = "";
     this.specialMessageFrames = 0;
@@ -34,6 +35,9 @@ function Pacman(maze, tileSize, ghosts) {
 
     // A callback an be assigned to this function
     this.ghostEaten = function(){};
+
+    // A callback an be assigned to this function
+    this.dies = function(){};
 
     // Number of frames an energizer is active
     this.energizerActive = 0;
@@ -54,8 +58,13 @@ function Pacman(maze, tileSize, ghosts) {
             keyStates.splice( pos, 1 );
     }, false);
 
+    this.setNewTileSize = function(newTileSize) {
+        this.x = this.pointInMazeH  * newTileSize;
+        this.y = this.pointInMazeV * newTileSize;
+        tileSize = newTileSize;
+    }
 
-    this.update = function () {
+    this.update = function() {
         if (this.energizerActive > 0) {
             this.energizerActive--;
         }
@@ -163,6 +172,7 @@ function Pacman(maze, tileSize, ghosts) {
                         _this.dieing = _this.dieingFrames;
 
                         // Play some audio here
+                        _this.dies();
 
                         // Freeze ghosts
                         ghosts.forEach(function (ghost) {

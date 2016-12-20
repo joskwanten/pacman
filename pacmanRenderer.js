@@ -1,4 +1,4 @@
-function PacmanRenderer(context, tileSize) {
+function PacmanRenderer(context) {
 
 
     var mouthOpen = 0;
@@ -27,10 +27,10 @@ function PacmanRenderer(context, tileSize) {
         context.fillText(String(pacman.points), 10, 50);
     }
 
-    var pacmanSize = tileSize * 2;
-
-    this.render = function (pacman) {
+    this.render = function (pacman, tileSize) {
         renderPoints(pacman);
+
+        var pacmanSize = tileSize * 2;
 
         this.x = pacman.x - tileSize / 2;
         this.y = pacman.y - tileSize / 2;
@@ -65,13 +65,25 @@ function PacmanRenderer(context, tileSize) {
         ctx.beginPath();
         ctx.moveTo(this.x  + pacmanSize / 2, this.y + pacmanSize /2);
 
-        ctx.arc(
-            this.x + pacmanSize / 2,
-            this.y  + pacmanSize / 2 ,
-            pacmanSize / 2.25,
-            (offset + (0.25 - 0.25 * mouthOpen / 7)) * Math.PI,
-                (offset + (1.75 + 0.25 * (mouthOpen / 7)))  * Math.PI,
-            false);
+        if (pacman.dieing) {
+            ctx.arc(
+                this.x + pacmanSize / 2,
+                this.y + pacmanSize / 2,
+                pacmanSize / 2.25,
+                (0.25 - (0.5 * pacman.dieing / 60)) * Math.PI,
+                (0.75 + (0.5 * pacman.dieing / 60)) * Math.PI,
+                false);
+        } else {
+            ctx.arc(
+                this.x + pacmanSize / 2,
+                this.y + pacmanSize / 2,
+                pacmanSize / 2.25,
+                (offset + (0.25 - 0.25 * mouthOpen / 7)) * Math.PI,
+                (offset + (1.75 + 0.25 * (mouthOpen / 7))) * Math.PI,
+                false);
+
+            //0.25 * Math.PI, .75 * Math.PI)
+        }
 
         ctx.closePath();
         ctx.fillStyle = 'yellow';
@@ -89,7 +101,7 @@ function PacmanRenderer(context, tileSize) {
             ctx.beginPath();
             ctx.moveTo(leftLifeX  + pacmanSize / 2, leftLifeY + pacmanSize /2);
 
-            ctx.arc(
+           ctx.arc(
                 leftLifeX + pacmanSize / 2,
                 leftLifeY  + pacmanSize / 2 ,
                 pacmanSize / 2.25,

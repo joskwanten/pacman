@@ -1,5 +1,5 @@
 function MazeRenderer(ctx, tileSize) {
-    
+
     var drawDoubleTopLeft = function (context, tileSize, offsetX, offsetY) {
         context.beginPath();
         context.moveTo(offsetX, offsetY + tileSize);
@@ -281,102 +281,143 @@ function MazeRenderer(ctx, tileSize) {
         context.fill();
     }
 
+
+    var prerenderedPointCanvas;
+    var m_pointCtx;
     var drawPoint = function (context, tileSize, offsetX, offsetY) {
-        context.beginPath();
+        if (!prerenderedPointCanvas) {
+            prerenderedPointCanvas = document.createElement('canvas');
+            prerenderedPointCanvas.width = tileSize;
+            prerenderedPointCanvas.height = tileSize;
+            var point_context = prerenderedPointCanvas.getContext('2d');
+            point_context.beginPath();
 
-        context.arc(
-            offsetX + tileSize / 2,
-            offsetY + tileSize / 2,
-            tileSize / 8, 0, 2 * Math.PI, false);
+            point_context.arc(
+                tileSize / 2,
+                tileSize / 2,
+                tileSize / 8, 0, 2 * Math.PI, false);
 
-        context.fillStyle = 'white';
-        context.fill();
+            point_context.fillStyle = 'white';
+            point_context.fill();
+        }
+
+        context.drawImage(prerenderedPointCanvas, offsetX, offsetY);
+
     }
 
-    this.renderMaze = function (theMaze) {
+    var prerenderedMaze;
+    var m_ctx;
+    var prerenderdTileSize;
+    this.renderMaze = function (theMaze,resized, tileSize) {
         /* Fill canvas with black color */
-        ctx.globalCompositeOperation = "source-over";
-        ctx.fillStyle = "rgba(0,0,0,1)";
-        ctx.fillRect(0, 0, W, H);
+        //ctx.globalCompositeOperation = "source-over";
+        //ctx.fillStyle = "rgba(255,0,0,1)";
+        //ctx.fillRect(0, 0, W, H);
+        //ctx.lineWidth = tileSize / 8;
 
-        ctx.lineWidth = tileSize / 8;
-        ctx.strokeStyle = "blue";
+        /* Prerender the maze (stays the same every time) */
+        if (!prerenderedMaze || resized || prerenderdTileSize !== tileSize) {
+
+            prerenderedMaze = document.createElement('canvas');
+            prerenderedMaze.width = ctx.canvas.width;
+            prerenderedMaze.height = ctx.canvas.height;
+            prerenderdTileSize = tileSize;
+
+            m_ctx = prerenderedMaze.getContext('2d');
+
+            /* Fill canvas with black color */
+            m_ctx.globalCompositeOperation = "source-over";
+            m_ctx.fillStyle = "rgba(0,0,0,1)";
+            m_ctx.fillRect(0, 0, prerenderedMaze.width, prerenderedMaze.height);
+
+            m_ctx.lineWidth = tileSize / 8;
+            m_ctx.strokeStyle = "blue";
+
+            for (var y = 0; y < verticalTiles; y++) {
+                for (var x = 0; x < horizontalTiles; x++) {
+                    switch (theMaze[y * horizontalTiles + x]) {
+                        case ElementIDs.DTLCORNER:
+                            drawDoubleTopLeft(m_ctx, tileSize, x * tileSize, y * tileSize);
+                            break;
+                        case ElementIDs.DTRCORNER:
+                            drawDoubleTopRight(m_ctx, tileSize, x * tileSize, y * tileSize);
+                            break;
+                        case ElementIDs.DBLCORNER:
+                            drawDoubleBottomLeft(m_ctx, tileSize, x * tileSize, y * tileSize);
+                            break;
+                        case ElementIDs.DBRCORNER:
+                            drawDoubleBottomRight(m_ctx, tileSize, x * tileSize, y * tileSize);
+                            break;
+                        case ElementIDs.DHORLINET:
+                            drawDoubleHorizontalTopLine(m_ctx, tileSize, x * tileSize, y * tileSize);
+                            break;
+                        case ElementIDs.DHORLINEB:
+                            drawDoubleHorizontalBottomLine(m_ctx, tileSize, x * tileSize, y * tileSize);
+                            break;
+                        case ElementIDs.DVERTLINEL:
+                            drawDoubleVerticalLineLeft(m_ctx, tileSize, x * tileSize, y * tileSize);
+                            break;
+                        case ElementIDs.DVERTLINER:
+                            drawDoubleVerticalLineRight(m_ctx, tileSize, x * tileSize, y * tileSize);
+                            break;
+                        case ElementIDs.DHORLINESVERTTL:
+                            drawDoubleHorizontalTopLineToVerticalSingleLine(m_ctx, tileSize, x * tileSize, y * tileSize);
+                            break;
+                        case ElementIDs.DHORLINESVERTTR:
+                            drawVerticalSingleLineToDoubleHorizontalTopLine(m_ctx, tileSize, x * tileSize, y * tileSize);
+                            break;
+                        case ElementIDs.SVERTLINE:
+                            drawSingleVerticalLineLeft(m_ctx, tileSize, x * tileSize, y * tileSize);
+                            break;
+                        case ElementIDs.SHORLINE:
+                            drawSingleHorizontalLine(m_ctx, tileSize, x * tileSize, y * tileSize);
+                            break;
+                        case ElementIDs.STLCORNER:
+                            drawSingleTopLeft(m_ctx, tileSize, x * tileSize, y * tileSize);
+                            break;
+                        case ElementIDs.STRCORNER:
+                            drawSingleTopRight(m_ctx, tileSize, x * tileSize, y * tileSize);
+                            break;
+                        case ElementIDs.SBLCORNER:
+                            drawSingleBottomLeft(m_ctx, tileSize, x * tileSize, y * tileSize);
+                            break;
+                        case ElementIDs.SBRCORNER:
+                            drawSingleBottomRight(m_ctx, tileSize, x * tileSize, y * tileSize);
+                            break;
+                        case ElementIDs.DTRCORNERBL:
+                            drawDoubleTopRightToBottomLine(m_ctx, tileSize, x * tileSize, y * tileSize);
+                            break;
+                        case ElementIDs.DBRCORNERTL:
+                            drawDoubleBottomRightToTopLine(m_ctx, tileSize, x * tileSize, y * tileSize);
+                            break;
+                        case ElementIDs.DTLCORNERBL:
+                            drawDoubleTopLeftToBottomLine(m_ctx, tileSize, x * tileSize, y * tileSize);
+                            break;
+                        case ElementIDs.DBLCORNERTL:
+                            drawDoubleBottomLeftToTopLine(m_ctx, tileSize, x * tileSize, y * tileSize);
+                            break;
+                        case ElementIDs.DVERTTOHORSTL:
+                            drawDoubleVerticalLineToHorizontalSingleLineBottomLeft(m_ctx, tileSize, x * tileSize, y * tileSize);
+                            break;
+                        case ElementIDs.DVERTTOHORSBL:
+                            drawDoubleVerticalLineToHorizontalSingleLineTopLeft(m_ctx, tileSize, x * tileSize, y * tileSize);
+                            break;
+                        case ElementIDs.DVERTTOHORSTR:
+                            drawDoubleVerticalLineToHorizontalSingleLineBottomRight(m_ctx, tileSize, x * tileSize, y * tileSize);
+                            break;
+                        case ElementIDs.DVERTTOHORSBR:
+                            drawDoubleVerticalLineToHorizontalSingleLineTopRight(m_ctx, tileSize, x * tileSize, y * tileSize);
+                            break;
+                    }
+                }
+            }
+        }
+
+        ctx.drawImage(prerenderedMaze, 0, 0);
 
         for (var y = 0; y < verticalTiles; y++) {
             for (var x = 0; x < horizontalTiles; x++) {
                 switch (theMaze[y * horizontalTiles + x]) {
-                    case ElementIDs.DTLCORNER:
-                        drawDoubleTopLeft(ctx, tileSize, x * tileSize, y * tileSize);
-                        break;
-                    case ElementIDs.DTRCORNER:
-                        drawDoubleTopRight(ctx, tileSize, x * tileSize, y * tileSize);
-                        break;
-                    case ElementIDs.DBLCORNER:
-                        drawDoubleBottomLeft(ctx, tileSize, x * tileSize, y * tileSize);
-                        break;
-                    case ElementIDs.DBRCORNER:
-                        drawDoubleBottomRight(ctx, tileSize, x * tileSize, y * tileSize);
-                        break;
-                    case ElementIDs.DHORLINET:
-                        drawDoubleHorizontalTopLine(ctx, tileSize, x * tileSize, y * tileSize);
-                        break;
-                    case ElementIDs.DHORLINEB:
-                        drawDoubleHorizontalBottomLine(ctx, tileSize, x * tileSize, y * tileSize);
-                        break;
-                    case ElementIDs.DVERTLINEL:
-                        drawDoubleVerticalLineLeft(ctx, tileSize, x * tileSize, y * tileSize);
-                        break;
-                    case ElementIDs.DVERTLINER:
-                        drawDoubleVerticalLineRight(ctx, tileSize, x * tileSize, y * tileSize);
-                        break;
-                    case ElementIDs.DHORLINESVERTTL:
-                        drawDoubleHorizontalTopLineToVerticalSingleLine(ctx, tileSize, x * tileSize, y * tileSize);
-                        break;
-                    case ElementIDs.DHORLINESVERTTR:
-                        drawVerticalSingleLineToDoubleHorizontalTopLine(ctx, tileSize, x * tileSize, y * tileSize);
-                        break;
-                    case ElementIDs.SVERTLINE:
-                        drawSingleVerticalLineLeft(ctx, tileSize, x * tileSize, y * tileSize);
-                        break;
-                    case ElementIDs.SHORLINE:
-                        drawSingleHorizontalLine(ctx, tileSize, x * tileSize, y * tileSize);
-                        break;
-                    case ElementIDs.STLCORNER:
-                        drawSingleTopLeft(ctx, tileSize, x * tileSize, y * tileSize);
-                        break;
-                    case ElementIDs.STRCORNER:
-                        drawSingleTopRight(ctx, tileSize, x * tileSize, y * tileSize);
-                        break;
-                    case ElementIDs.SBLCORNER:
-                        drawSingleBottomLeft(ctx, tileSize, x * tileSize, y * tileSize);
-                        break;
-                    case ElementIDs.SBRCORNER:
-                        drawSingleBottomRight(ctx, tileSize, x * tileSize, y * tileSize);
-                        break;
-                    case ElementIDs.DTRCORNERBL:
-                        drawDoubleTopRightToBottomLine(ctx, tileSize, x * tileSize, y * tileSize);
-                        break;
-                    case ElementIDs.DBRCORNERTL:
-                        drawDoubleBottomRightToTopLine(ctx, tileSize, x * tileSize, y * tileSize);
-                        break;
-                    case ElementIDs.DTLCORNERBL:
-                        drawDoubleTopLeftToBottomLine(ctx, tileSize, x * tileSize, y * tileSize);
-                        break;
-                    case ElementIDs.DBLCORNERTL:
-                        drawDoubleBottomLeftToTopLine(ctx, tileSize, x * tileSize, y * tileSize);
-                        break;
-                    case ElementIDs.DVERTTOHORSTL:
-                        drawDoubleVerticalLineToHorizontalSingleLineBottomLeft(ctx, tileSize, x * tileSize, y * tileSize);
-                        break;
-                    case ElementIDs.DVERTTOHORSBL:
-                        drawDoubleVerticalLineToHorizontalSingleLineTopLeft(ctx, tileSize, x * tileSize, y * tileSize);
-                        break;
-                    case ElementIDs.DVERTTOHORSTR:
-                        drawDoubleVerticalLineToHorizontalSingleLineBottomRight(ctx, tileSize, x * tileSize, y * tileSize);
-                        break;
-                    case ElementIDs.DVERTTOHORSBR:
-                        drawDoubleVerticalLineToHorizontalSingleLineTopRight(ctx, tileSize, x * tileSize, y * tileSize);
-                        break;
                     case ElementIDs.ENERGIZER:
                         drawEnergizer(ctx, tileSize, x * tileSize, y * tileSize);
                         break;

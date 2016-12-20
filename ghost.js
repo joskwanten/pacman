@@ -94,6 +94,12 @@ function Ghost(id, name, color, character, maze, tileSize) {
 
     }
 
+    this.setNewTileSize = function(newTileSize) {
+        tileSize = newTileSize;
+        this.x = this.pointInMazeH * tileSize;
+        this.y = this.pointInMazeV * tileSize;
+    }
+
     this.kill = function() {
         this.killed = true;
         this.speed = this.baseSpeed / 2;
