@@ -33,6 +33,9 @@ function Ghost(id, name, color, character, maze, tileSize) {
     this.killed = false;
 
     this.initialPosition = function initialPosition() {
+        // Reset the speed
+        this.speed = this.baseSpeed;
+
         switch (this.name) {
             case "CLYDE":
                 this.x = horizontalTiles / 2 * tileSize - 2 * tileSize;
