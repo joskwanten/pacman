@@ -3,7 +3,6 @@ function Ghost(id, name, color, character, maze, tileSize) {
     this.name = name;
     this.color = color;
     this.character = character;
-    this.maze = maze;
     // speed in frames to travel to the next tile
     this.baseSpeed = 8;
     this.speed = this.baseSpeed;
@@ -73,6 +72,10 @@ function Ghost(id, name, color, character, maze, tileSize) {
         this.initialPosition();
     }
 
+    this.setMaze = function(newMaze){
+        maze = newMaze;
+        this.resetGhost();
+    }
 
     function opposite(direction) {
         switch(direction) {

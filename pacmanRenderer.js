@@ -21,14 +21,21 @@ function PacmanRenderer(context) {
         context.lineWidth = 1;
     }
 
-    function renderPoints(pacman) {
-        context.font = "30px Arial";
-        context.fillStyle = "yellow";
-        context.fillText(String(pacman.points), 10, 50);
+    function renderPoints(pacman, tileSize) {
+        context.font =  tileSize + "px Arial";
+        context.fillStyle = "white";
+        context.fillText("1UP", tileSize, tileSize);
+        context.fillText(String(pacman.points), tileSize, 2 * tileSize);
+
+        context.fillText("HIGH SCORE", 12 * tileSize, tileSize);
+        context.fillText(String(0), 12 * tileSize, 2 * tileSize);
+
+        context.fillText("2UP", 24 * tileSize, tileSize);
+        context.fillText(String(pacman.points), 24 * tileSize, 2 * tileSize);
     }
 
     this.render = function (pacman, tileSize) {
-        renderPoints(pacman);
+        renderPoints(pacman, tileSize);
 
         var pacmanSize = tileSize * 2;
 

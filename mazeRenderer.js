@@ -308,7 +308,9 @@ function MazeRenderer(ctx, tileSize) {
     var prerenderedMaze;
     var m_ctx;
     var prerenderdTileSize;
-    this.renderMaze = function (theMaze,resized, tileSize) {
+    var endOfLevelToggle = false;
+
+    this.renderMaze = function (theMaze,resized, tileSize, endOfLevel) {
         /* Fill canvas with black color */
         //ctx.globalCompositeOperation = "source-over";
         //ctx.fillStyle = "rgba(255,0,0,1)";
@@ -316,7 +318,7 @@ function MazeRenderer(ctx, tileSize) {
         //ctx.lineWidth = tileSize / 8;
 
         /* Prerender the maze (stays the same every time) */
-        if (!prerenderedMaze || resized || prerenderdTileSize !== tileSize) {
+        if (endOfLevel || !prerenderedMaze || resized || prerenderdTileSize !== tileSize) {
 
             prerenderedMaze = document.createElement('canvas');
             prerenderedMaze.width = ctx.canvas.width;
@@ -331,7 +333,12 @@ function MazeRenderer(ctx, tileSize) {
             m_ctx.fillRect(0, 0, prerenderedMaze.width, prerenderedMaze.height);
 
             m_ctx.lineWidth = tileSize / 8;
-            m_ctx.strokeStyle = "blue";
+            if (endOfLevel) {
+                m_ctx.strokeStyle = endOfLevelToggle ? "blue" : "yellow";
+                endOfLevelToggle = !endOfLevelToggle;
+            } else {
+                m_ctx.strokeStyle = "blue";
+            }
 
             for (var y = 0; y < verticalTiles; y++) {
                 for (var x = 0; x < horizontalTiles; x++) {

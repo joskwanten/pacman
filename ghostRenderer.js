@@ -15,6 +15,18 @@ function GhostRenderer(context) {
     var prerenderCanvases = [];
     var prerenderedTileSize;
 
+    this.renderInfo = function (ghost, tileSize) {
+        ctx.font="30px Verdana";
+        // Create gradient
+
+        ctx.fillStyle = ghost.color;
+
+        ctx.fillText(ghost.name,ghost.x + 2 * tileSize, ghost.y + tileSize / 2);
+        ctx.fillText(ghost.character,ghost.x + 10 * tileSize, ghost.y + tileSize / 2);
+
+
+    }
+
     this.render = function (ghost, canBeEaten, canBeEatenAlmostEnds, tileSize) {
         var ghostSize = tileSize * 2;
 

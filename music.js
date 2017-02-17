@@ -61,8 +61,8 @@ function  playTune(audioCtx) {
         var attack = 0.03;
         var decay = 0.1;
         var decayLevel = 0.7
-        var sustain = 0.5;
-        var sustainLevel = 0.5;
+        var sustain = 0.1;
+        var sustainLevel = 0.1
         var release = 5;
 
         c3oscillator1.frequency.setValueAtTime(frequency, time);
@@ -93,41 +93,41 @@ function  playTune(audioCtx) {
     });
 
     //musicPlayer.play(2, "B2", 1, 0);
-    musicPlayer.play(3, "B4", 1 / 4, 1 / 4);
-    musicPlayer.play(3, "B5", 1 / 4, 1 / 4);
-    musicPlayer.play(3, "F#5", 1 / 4, 1 / 4);
-    musicPlayer.play(3, "D#5", 1 / 4, 1 / 4);
-    musicPlayer.play(3, "B5", 1 / 4, 1 / 4);
-    //musicPlayer.play(2, "F#2", 1, 0);
-    musicPlayer.play(3, "F#5", 1 / 4, 1 / 4);
-    musicPlayer.play(3, "D#5", 1 / 4, 1 / 4);
+    musicPlayer.play(3, "B4", 1 / 8, 1 / 4);
+    musicPlayer.play(3, "B5", 1 / 8, 1 / 4);
+    musicPlayer.play(3, "F#5", 1 / 8, 1 / 4);
+    musicPlayer.play(3, "D#5", 1 / 8, 1 / 4);
+    musicPlayer.play(3, "B5", 1 / 8, 1 / 4);
+    //musicPlayer.play(2, "F#2", 8, 0);
+    musicPlayer.play(3, "F#5", 1 / 8, 1 / 4);
+    musicPlayer.play(3, "D#5", 1 / 8, 1 / 4);
 
     //musicPlayer.play(2, "C2", 1, 0);
-    musicPlayer.play(3, "C5", 1 / 4, 1 / 4);
-    musicPlayer.play(3, "C6", 1 / 4, 1 / 4);
-    musicPlayer.play(3, "G5", 1 / 4, 1 / 4);
-    musicPlayer.play(3, "E5", 1 / 4, 1 / 4);
+    musicPlayer.play(3, "C5", 1 / 8, 1 / 4);
+    musicPlayer.play(3, "C6", 1 / 8, 1 / 4);
+    musicPlayer.play(3, "G5", 1 / 8, 1 / 4);
+    musicPlayer.play(3, "E5", 1 / 8, 1 / 4);
     //musicPlayer.play(2, "G2", 1, 0);
-    musicPlayer.play(3, "C6", 1 / 4, 1 / 4);
-    musicPlayer.play(3, "G5", 1 / 4, 1 / 4);
-    musicPlayer.play(3, "E5", 1 / 4, 1 / 4);
+    musicPlayer.play(3, "C6", 1 / 8, 1 / 4);
+    musicPlayer.play(3, "G5", 1 / 8, 1 / 4);
+    musicPlayer.play(3, "E5", 1 / 8, 1 / 4);
 
     //musicPlayer.play(2, "B2", 1, 0);
-    musicPlayer.play(3, "B4", 1 / 4, 1 / 4);
-    musicPlayer.play(3, "B5", 1 / 4, 1 / 4);
-    musicPlayer.play(3, "F#5", 1 / 4, 1 / 4);
-    musicPlayer.play(3, "D#5", 1 / 4, 1 / 4);
-    musicPlayer.play(3, "B5", 1 / 4, 1 / 4);
-    musicPlayer.play(3, "F#5", 1 / 4, 1 / 4);
-    musicPlayer.play(3, "D#5", 1 / 4, 1 / 4);
-    musicPlayer.play(3, "E5", 1 / 4, 1 / 4);
+    musicPlayer.play(3, "B4", 1 / 8, 1 / 4);
+    musicPlayer.play(3, "B5", 1 / 8, 1 / 4);
+    musicPlayer.play(3, "F#5", 1 / 8, 1 / 4);
+    musicPlayer.play(3, "D#5", 1 / 8, 1 / 4);
+    musicPlayer.play(3, "B5", 1 / 8, 1 / 4);
+    musicPlayer.play(3, "F#5", 1 / 8, 1 / 4);
+    musicPlayer.play(3, "D#5", 1 / 8, 1 / 4);
+    musicPlayer.play(3, "E5", 1 / 8, 1 / 4);
     //musicPlayer.play(2, "E2", 1, 0);
-    musicPlayer.play(3, "F5", 1 / 4, 1 / 4);
-    musicPlayer.play(3, "F#5", 1 / 4, 1 / 4);
-    musicPlayer.play(3, "G5", 1 / 4, 1 / 4);
+    musicPlayer.play(3, "F5", 1 / 8, 1 / 4);
+    musicPlayer.play(3, "F#5", 1 / 8, 1 / 4);
+    musicPlayer.play(3, "G5", 1 / 8, 1 / 4);
     //musicPlayer.play(2, "G2", 1, 0);
-    musicPlayer.play(3, "G#5", 1 / 4, 1 / 4);
-    musicPlayer.play(3, "A#5", 1 / 4, 1 / 4);
+    musicPlayer.play(3, "G#5", 1 / 8, 1 / 4);
+    musicPlayer.play(3, "A#5", 1 / 8, 1 / 4);
     //musicPlayer.play(2, "B2", 1/4, 1/4);
-    musicPlayer.play(3, "B5", 1 / 4, 1 / 4);
+    musicPlayer.play(3, "B5", 1 / 8, 1 / 4);
 }

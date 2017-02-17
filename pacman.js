@@ -2,7 +2,6 @@ function Pacman(maze, ghosts) {
     var tileSize = 24;
 
     this.color = "yellow";
-    this.maze = maze;
 
     // speed in frames to travel to the next tile
     this.speed = 8;
@@ -66,6 +65,11 @@ function Pacman(maze, ghosts) {
 
     function collisions() {
 
+    }
+
+    this.setMaze = function(newMaze){
+        maze = newMaze;
+        this.reset();
     }
 
     this.update = function() {
