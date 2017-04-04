@@ -162,7 +162,7 @@ function GhostRenderer(context) {
                 m_ctx.lineWidth = 1;
 
                 // line color
-                m_ctx.strokeStyle = ghost.color;
+                m_ctx.strokeStyle = color;
                 m_ctx.stroke();
             }
             // Draw ghost eyes
@@ -225,5 +225,13 @@ function GhostRenderer(context) {
         this.x = ghost.x - tileSize;
         this.y = ghost.y - tileSize;
         ctx.drawImage(found.canvas, this.x, this.y);
+
+        if (ghost.killed) {
+            ctx.fillStyle = 'white';
+            ctx.font = tileSize + "px Arial";
+            var points = (200 * ghost.killedSeq).toString();
+            ctx.fillText(points, ghost.killedX, ghost.killedY);
+        }
+
     }
 }

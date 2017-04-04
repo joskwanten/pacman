@@ -30,6 +30,9 @@ function Ghost(id, name, color, character, maze, tileSize) {
     var frameCounter = 0;
 
     this.killed = false;
+    this.killedX = 0;
+    this.killedY = 0;
+    this.killedSeq = 0;
 
     this.initialPosition = function initialPosition() {
         // Reset the speed
@@ -106,9 +109,12 @@ function Ghost(id, name, color, character, maze, tileSize) {
         this.y = this.pointInMazeV * tileSize;
     }
 
-    this.kill = function() {
+    this.kill = function(seq) {
         this.killed = true;
         this.speed = this.baseSpeed / 2;
+        this.killedX = this.x;
+        this.killedY = this.y;
+        this.killedSeq = seq;
         this.x -= this.x % tileSize;
         this.y -= this.y % tileSize;
     };

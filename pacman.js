@@ -5,6 +5,7 @@ function Pacman(maze, ghosts) {
 
     // speed in frames to travel to the next tile
     this.speed = 8;
+    this.killedSeq = 1;
 
     this.pointInMazeV = verticalTiles / 2;
     this.pointInMazeH = horizontalTiles / 2;
@@ -34,6 +35,8 @@ function Pacman(maze, ghosts) {
 	
 	// A callback an be assigned to this function
 	this.pelletEaten = function(){};
+
+    this.energizerEaten = function(){};
 
     // A callback an be assigned to this function
     this.ghostEaten = function(){};
@@ -78,13 +81,14 @@ function Pacman(maze, ghosts) {
         ghosts.forEach(function (ghost) {
             if (ghost.pointInMazeV == _this.pointInMazeV && ghost.pointInMazeH == _this.pointInMazeH) {
                 if (_this.energizerActive > 0 && !ghost.killed) {
-                    ghost.kill();
+                    ghost.kill(_this.killedSeq);
                     _this.ghostEaten();
-                    _this.points += 200;
+                    _this.points += 200 * _this.killedSeq;
                     _this.ghostPointsPerEnergizer += 200;
                     _this.specialMessage = String(this.ghostPointsPerEnergizer);
                     _this.specialMessageFrames = 120;
                     _this.specialMessageLocation = {V: ghost.pointInMazeV, H: ghost.pointInMazeH};
+                    _this.killedSeq++;
                 } else {
                     if (_this.dieing === 0 && !ghost.killed) {
                         _this.dieing = _this.dieingFrames;
@@ -116,7 +120,7 @@ function Pacman(maze, ghosts) {
             this.pointInMazeH = this.x / tileSize;
 			
 			if (this.pointInMazeH < 0) {
-				this.pointInMazeH = horizontalTiles -1;
+				this.pointInMazeH = horizontalTiles - 1;
 				this.x = this.pointInMazeH  * tileSize
 			}
 			
@@ -137,6 +141,9 @@ function Pacman(maze, ghosts) {
             }
 
             if (maze[this.pointInMazeV * horizontalTiles + this.pointInMazeH] == ElementIDs.ENERGIZER  ) {
+                this.points += 50;
+                this.killedSeq = 1;
+                this.energizerEaten();
                 this.energizerActive = 5 * 60;
                 this.ghostPointsPerEnergizer = 0;
                 maze[this.pointInMazeV * horizontalTiles + this.pointInMazeH] = 88;
