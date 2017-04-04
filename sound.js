@@ -62,6 +62,7 @@ function Sound(audioCtx) {
 	var slowWowGain1 = audioCtx.createGain();
 
 	this.playSlowWow = function() {
+		return;
 		// create Oscillator node
 		var slowWowOscillator1 = audioCtx.createOscillator();
 

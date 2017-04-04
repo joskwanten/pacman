@@ -167,6 +167,10 @@ function Ghost(id, name, color, character, maze, tileSize) {
             targetV = 31;
         }
 
+        if (this.mode == 'frightened') {
+            targetH = Math.floor(28 * Math.random());
+            targetV = Math.floor(36 * Math.random());
+        }
 
         if (this.killed == true) {
             targetH = ghostHouseH;
@@ -229,7 +233,7 @@ function Ghost(id, name, color, character, maze, tileSize) {
 
     }
 
-    this.update = function (pacmanH, pacmanV, pacmanDirection, nrOfPelletsEaten) {
+    this.update = function (pacmanH, pacmanV, pacmanDirection, nrOfPelletsEaten, tileSize, energizerActive) {
         frameCounter++;
 
         // In  case the ghost is recovering in the ghosthouse, decrement te framecoutner
@@ -262,6 +266,13 @@ function Ghost(id, name, color, character, maze, tileSize) {
             return;
         }
 
+        if (energizerActive && !this.killed) {
+            this.mode = 'frightened';
+        } else if(!this.killed) {
+            // Restore speed
+            this.speed = this.baseSpeed;
+        }
+
         if (this.x % tileSize == 0 && this.y % tileSize == 0) {
             this.pointInMazeH = this.x / tileSize;
             this.pointInMazeV = this.y / tileSize;
@@ -271,8 +282,6 @@ function Ghost(id, name, color, character, maze, tileSize) {
                 this.killed = false;
                 this.recoveryFrames = 5 * 60;
 
-                // Restore speed
-                this.speed = this.baseSpeed;
                 this.x -= this.x % tileSize;
                 this.y -= this.y % tileSize;
             }
@@ -316,7 +325,7 @@ function Ghost(id, name, color, character, maze, tileSize) {
                 allowedDirections.splice(allowedDirections.indexOf("up"), 1);
             }
 
-            // CLYDE leaves the ghosthouse after eating 75 pellets (about 30%)
+            // PINKY is allowed to go out of the ghosthost (if no recovery is active))
             if (this.recoveryFrames > 0 && allowedDirections.indexOf("up") >= 0) {
                 allowedDirections.splice(allowedDirections.indexOf("up"), 1);
             }
@@ -332,19 +341,21 @@ function Ghost(id, name, color, character, maze, tileSize) {
             }
         }
 
-        switch (this.direction) {
-            case "right":
-                this.x += tileSize / this.speed;
-                break;
-            case "left":
-                this.x -= tileSize / this.speed;
-                break;
-            case "up":
-                this.y -= tileSize / this.speed;
-                break;
-            case "down":
-                this.y += tileSize / this.speed;
-                break;
+        if (this.mode !== 'frightened' || frameCounter % 3 !== 0) {
+            switch (this.direction) {
+                case "right":
+                    this.x += tileSize / this.speed;
+                    break;
+                case "left":
+                    this.x -= tileSize / this.speed;
+                    break;
+                case "up":
+                    this.y -= tileSize / this.speed;
+                    break;
+                case "down":
+                    this.y += tileSize / this.speed;
+                    break;
+            }
         }
     }
 }

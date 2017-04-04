@@ -34,8 +34,10 @@ function PacmanRenderer(context) {
         context.fillText(String(pacman.points), 24 * tileSize, 2 * tileSize);
     }
 
-    this.render = function (pacman, tileSize) {
-        renderPoints(pacman, tileSize);
+    this.render = function (pacman, tileSize, onlyPacman) {
+        if (!onlyPacman) {
+            renderPoints(pacman, tileSize);
+        }
 
         var pacmanSize = tileSize * 2;
 
@@ -99,29 +101,30 @@ function PacmanRenderer(context) {
         ctx.strokeStyle = '#003300';
         ctx.stroke();
 
-        
-        for(var i = 0; i < pacman.livesLeft; i++) {
+        if (!onlyPacman) {
+            for (var i = 0; i < pacman.livesLeft; i++) {
 
-            var leftLifeX = tileSize * 2 * i;
-            var leftLifeY = tileSize * 34;
-            
-            ctx.beginPath();
-            ctx.moveTo(leftLifeX  + pacmanSize / 2, leftLifeY + pacmanSize /2);
+                var leftLifeX = tileSize * 2 * i;
+                var leftLifeY = tileSize * 34;
 
-           ctx.arc(
-                leftLifeX + pacmanSize / 2,
-                leftLifeY  + pacmanSize / 2 ,
-                pacmanSize / 2.25,
-                (1 + (0.25)) * Math.PI,
-                (1 + (1.75))  * Math.PI,
-                false);
+                ctx.beginPath();
+                ctx.moveTo(leftLifeX + pacmanSize / 2, leftLifeY + pacmanSize / 2);
 
-            ctx.closePath();
-            ctx.fillStyle = 'yellow';
-            ctx.fill();
-            ctx.lineWidth = 1;
-            ctx.strokeStyle = '#003300';
-            ctx.stroke();
+                ctx.arc(
+                    leftLifeX + pacmanSize / 2,
+                    leftLifeY + pacmanSize / 2,
+                    pacmanSize / 2.25,
+                    (1 + (0.25)) * Math.PI,
+                    (1 + (1.75)) * Math.PI,
+                    false);
+
+                ctx.closePath();
+                ctx.fillStyle = 'yellow';
+                ctx.fill();
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = '#003300';
+                ctx.stroke();
+            }
         }
 
         animateElements();

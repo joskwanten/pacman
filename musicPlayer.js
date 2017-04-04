@@ -20,12 +20,16 @@ function MusicPlayer(tempo, audioCtx) {
 
     var time = audioCtx.currentTime;
 
+    this.reset = function() {
+        time = audioCtx.currentTime;
+    }
+
     function durationTime(durationNote) {
         return durationNote *  60 / tempo;
     }
 
     function timeAdvances(durationNote) {
-        time += (durationNote *  60 / tempo) + audioCtx.currentTime;
+        time += (durationNote *  60 / tempo);
         return time;
     }
 

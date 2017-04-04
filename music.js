@@ -56,6 +56,7 @@ function  playTune(audioCtx) {
     c3oscillator5.start();
 
     var musicPlayer = new MusicPlayer(120, audioCtx);
+    musicPlayer.reset();
 
     musicPlayer.registerChannel(3, function (frequency, duration, time, relativeVolume) {
         var attack = 0.03;

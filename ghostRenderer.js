@@ -16,13 +16,13 @@ function GhostRenderer(context) {
     var prerenderedTileSize;
 
     this.renderInfo = function (ghost, tileSize) {
-        ctx.font="30px Verdana";
+        ctx.font= 2 * tileSize + "px Arial";
         // Create gradient
 
         ctx.fillStyle = ghost.color;
 
-        ctx.fillText(ghost.name,ghost.x + 2 * tileSize, ghost.y + tileSize / 2);
-        ctx.fillText(ghost.character,ghost.x + 10 * tileSize, ghost.y + tileSize / 2);
+        ctx.fillText("/ " + ghost.name,ghost.x + 12 * tileSize, ghost.y + 1.3 * tileSize);
+        ctx.fillText(ghost.character,ghost.x + 2 * tileSize, ghost.y + 1.3 * tileSize);
 
 
     }
@@ -44,7 +44,7 @@ function GhostRenderer(context) {
             toggle = !toggle;
         }
 
-        var color = canBeEaten ? (canBeEatenAlmostEnds ? (toggle ? "black": "pink"): "pink") : ghost.color;
+        var color = canBeEaten ? (canBeEatenAlmostEnds ? (toggle ? "black": "darkblue"): "darkblue") : ghost.color;
 
         this.x = tileSize / 2;
         this.y = tileSize / 2;
@@ -96,11 +96,11 @@ function GhostRenderer(context) {
 
             found = prerenderCanvases[prerenderCanvases.length - 1];
 
-            if (color == 'pink') {
-                this.fill = m_ctx.createLinearGradient(this.x, this.y, this.x + ghostSize, this.y + ghostSize);
-                this.fill.addColorStop(0, '#FFD68E');
-                this.fill.addColorStop(1, '#B34C84');
-            }
+            // if (color == 'pink') {
+            //     this.fill = m_ctx.createLinearGradient(this.x, this.y, this.x + ghostSize, this.y + ghostSize);
+            //     this.fill.addColorStop(0, '#FFD68E');
+            //     this.fill.addColorStop(1, '#B34C84');
+            // }
 
             if (color == 'black') {
                 this.fill = m_ctx.createLinearGradient(this.x, this.y, this.x + ghostSize, this.y + ghostSize);
@@ -114,16 +114,28 @@ function GhostRenderer(context) {
                 this.fill.addColorStop(1, '#444CB3');
             }
 
+            if (color == 'darkblue') {
+                this.fill = m_ctx.createLinearGradient(this.x, this.y, this.x + ghostSize, this.y + ghostSize);
+                this.fill.addColorStop(0, '#3E26FF');
+                this.fill.addColorStop(1, '#3E26FF');
+            }
+
             if (color == 'red') {
                 this.fill = m_ctx.createLinearGradient(this.x, this.y, this.x + ghostSize, this.y + ghostSize);
                 this.fill.addColorStop(0, '#FFD68E');
-                this.fill.addColorStop(1, '#B34C44');
+                this.fill.addColorStop(1, '#FF2C24');
             }
 
             if (color == 'yellow') {
                 this.fill = m_ctx.createLinearGradient(this.x, this.y, this.x + ghostSize, this.y + ghostSize);
                 this.fill.addColorStop(0, '#FFFF8E');
                 this.fill.addColorStop(1, '#B3BC44');
+            }
+
+            if (color == 'pink') {
+                 this.fill = m_ctx.createLinearGradient(this.x, this.y, this.x + ghostSize, this.y + ghostSize);
+                 this.fill.addColorStop(0, '#FFFF8E');
+                 this.fill.addColorStop(1, '#FF69B4');
             }
 
             if (color == 'green') {

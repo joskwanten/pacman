@@ -4,6 +4,10 @@
 var baseW = 224, baseH = 288;
 var W = 896, H = 1152, tileSize = 24, horizontalTiles = 28, verticalTiles = 36;
 
+const fps = 60;
+const gameOverFrames = fps * 5;
+var gameOverFramesLeft = 0;
+
 /* List of ids that can be used in the tiles */
 var ElementIDs = {
     BLANK: 0, /* Blank tile */
@@ -44,9 +48,9 @@ var ElementIDs = {
 
 var ghosts = [];
 ghosts.push(new Ghost(ElementIDs.BLINKY, "BLINKY", "red", "SHADOW", maze, tileSize));
-ghosts.push(new Ghost(ElementIDs.PINKY, "PINKY", "yellow", "SPEEDY", maze, tileSize));
+ghosts.push(new Ghost(ElementIDs.PINKY, "PINKY", "pink", "SPEEDY", maze, tileSize));
 ghosts.push(new Ghost(ElementIDs.INKY, "INKY", "blue", "BASHFUL", maze, tileSize));
-ghosts.push(new Ghost(ElementIDs.CLYDE, "CLYDE", "green", "POKEY", maze, tileSize));
+ghosts.push(new Ghost(ElementIDs.CLYDE, "CLYDE", "yellow", "POKEY", maze, tileSize));
 
 var pacman = new Pacman(maze, ghosts, tileSize);
 
@@ -69,28 +73,39 @@ pacman.dies = function() {
     sound.playPacmanDies();
 }
 
+
 function Game(mazeData, renderFunction) {
     this.originMaze = mazeData.slice();
     this.maze = mazeData;
     this.endOfLevel = false;
     this.endOfLevelFrames = 0;
 
+    this.newMaze = function () {
+        this.maze = this.originMaze.concat();
+        pacman.setMaze(this.maze);
+
+        var _this = this;
+        ghosts.forEach(function (ghost) {
+            ghost.setMaze(_this.maze);
+        });
+    }
+
     this.update = function () {
         this.endOfLevelFrames = this.endOfLevel ? this.endOfLevelFrames - 1 : 0;
 
         if (this.endOfLevelFrames == 0 && this.endOfLevel) {
             this.endOfLevel = false;
-            this.maze = this.originMaze.concat();
-            pacman.setMaze(this.maze);
-
-            var _this = this;
-            ghosts.forEach(function (ghost) {
-                ghost.setMaze(_this.maze);
-            });
+            this.newMaze();
         }
 
         ghosts.forEach(function (ghost) {
-            ghost.update(pacman.pointInMazeH, pacman.pointInMazeV, pacman.direction, pacman.nrOfPelletsEaten, tileSize);
+            ghost.update(pacman.pointInMazeH,
+                pacman.pointInMazeV,
+                pacman.direction,
+                pacman.nrOfPelletsEaten,
+                tileSize,
+                pacman.energizerActive > 0
+            );
         });
 
         pacman.update(tileSize);
@@ -149,6 +164,7 @@ window.addEventListener("resize", resize);
 /* Create the render-engine */
 var mazeRenderer = new MazeRenderer(ctx, tileSize);
 var startScreenRenderer = new StartScreenRenderer(ctx, tileSize);
+var gameoverRendered = new GameoverRenderer(ctx)
 
 // The ghost renderer has some state, so we create a renderer per ghost
 var ghostRenderers = [];
@@ -162,6 +178,7 @@ var pacmanRenderer = new PacmanRenderer(ctx);
 
 /* Create a new Game */
 var started = false;
+
 var myGame = new Game(maze, function (myMaze, endOfLevel) {
     if (started) {
         mazeRenderer.renderMaze(myMaze, resized, tileSize, endOfLevel);
@@ -171,15 +188,21 @@ var myGame = new Game(maze, function (myMaze, endOfLevel) {
             ghostRenderers[index].render(ghost, pacman.energizerActive > 0, pacman.energizerActive < 2 * 60, tileSize)
         });
 
-        pacmanRenderer.render(pacman, tileSize)
+        pacmanRenderer.render(pacman, tileSize, false);
+
+        if (gameOverFramesLeft > 0) {
+            gameoverRendered.renderScreen(tileSize);
+        }
     } else {
-        startScreenRenderer.renderScreen();
+        startScreenRenderer.renderScreen(tileSize);
         ghosts.forEach(function (ghost, index) {
             ghost.x = 6 * tileSize;
-            ghost.y = 15 * (tileSize + index * 3);
+            ghost.y = (15 + (2 * index)) * tileSize;
             ghostRenderers[index].render(ghost, pacman.energizerActive > 0, pacman.energizerActive < 2 * 60, tileSize)
             ghostRenderers[index].renderInfo(ghost, tileSize)
         });
+
+        pacmanRenderer.render(pacman, tileSize, true);
 
         document.addEventListener('keydown', function(e) {
             e.preventDefault();
@@ -188,17 +211,36 @@ var myGame = new Game(maze, function (myMaze, endOfLevel) {
                 // Reset ghost positions
                 ghosts.forEach(function(ghost) { ghost.resetGhost(); });
 
+                if (!started ){
+                    playTune(audioCtx);
+                }
+
                 started = true;
             }
         }, false);
     }
 });
 
-playTune(audioCtx);
+//playTune(audioCtx);
 
-var fps = 60;
+pacman.noLivesLeft = function() {
+    gameOverFramesLeft = gameOverFrames;
+}
+
+
 setInterval(function () {
-    myGame.update();
+    if (started && gameOverFramesLeft === 0) {
+        myGame.update();
+    }
+    if (gameOverFramesLeft > 0) {
+        if (gameOverFramesLeft === 1) {
+            started = false;
+            pacman.initForNewGame();
+            myGame.newMaze();
+        }
+
+        gameOverFramesLeft--;
+    }
     window.requestAnimationFrame(function () {
         myGame.render();
     });

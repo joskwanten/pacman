@@ -13,11 +13,14 @@ function Pacman(maze, ghosts) {
 
     this.reset =  function reset() {
         this.x = horizontalTiles / 2 * tileSize;
-        this.y = 20 * tileSize;
+        this.y = 26 * tileSize;
         this.direction = "stop";
     }
 
-    this.reset();
+    this.initForNewGame = function() {
+        this.reset();
+        this.livesLeft = 3;
+    }
 
     this.nrOfPelletsEaten = 0;
     this.dieing = 0;
@@ -37,6 +40,8 @@ function Pacman(maze, ghosts) {
 
     // A callback an be assigned to this function
     this.dies = function(){};
+
+    this.noLivesLeft = function() {};
 
     // Number of frames an energizer is active
     this.energizerActive = 0;
@@ -58,13 +63,9 @@ function Pacman(maze, ghosts) {
     }, false);
 
     this.setNewTileSize = function(newTileSize) {
-        this.x = this.pointInMazeH  * newTileSize;
-        this.y = this.pointInMazeV * newTileSize;
+        this.x = (this.x / tileSize) * newTileSize;
+        this.y = (this.y / tileSize) * newTileSize;
         tileSize = newTileSize;
-    }
-
-    function collisions() {
-
     }
 
     this.setMaze = function(newMaze){
@@ -72,7 +73,41 @@ function Pacman(maze, ghosts) {
         this.reset();
     }
 
+    this.handleCollisions = function() {
+        var _this = this;
+        ghosts.forEach(function (ghost) {
+            if (ghost.pointInMazeV == _this.pointInMazeV && ghost.pointInMazeH == _this.pointInMazeH) {
+                if (_this.energizerActive > 0 && !ghost.killed) {
+                    ghost.kill();
+                    _this.ghostEaten();
+                    _this.points += 200;
+                    _this.ghostPointsPerEnergizer += 200;
+                    _this.specialMessage = String(this.ghostPointsPerEnergizer);
+                    _this.specialMessageFrames = 120;
+                    _this.specialMessageLocation = {V: ghost.pointInMazeV, H: ghost.pointInMazeH};
+                } else {
+                    if (_this.dieing === 0 && !ghost.killed) {
+                        _this.dieing = _this.dieingFrames;
+
+                        // Play some audio here
+                        _this.dies();
+
+                        // Freeze ghosts
+                        ghosts.forEach(function (ghost) {
+                            ghost.freezeGhost();
+                        });
+                    }
+                }
+            }
+        });
+    }
+
     this.update = function() {
+        // Check for a collision with another ghost if not dieing
+        this.handleCollisions();
+
+        var skip = false;
+
         if (this.energizerActive > 0) {
             this.energizerActive--;
         }
@@ -96,6 +131,8 @@ function Pacman(maze, ghosts) {
                 this.nrOfPelletsEaten += 1;
                 this.points += 10;
 				this.pelletEaten();
+                // One frameskip to make pacman a little slower when eating a pellet
+                skip = true;
                 maze[this.pointInMazeV * horizontalTiles + this.pointInMazeH] = 88;
             }
 
@@ -130,9 +167,7 @@ function Pacman(maze, ghosts) {
             }
         }
 
-         // Check for a collision with another ghost if not dieing
-        if(this.dieing == 0) {
-
+        if(this.dieing == 0 && !skip) {
             switch (this.direction) {
                 case "right":
                     this.x += tileSize / this.speed;
@@ -148,30 +183,8 @@ function Pacman(maze, ghosts) {
                     break;
             }
 
-            var _this = this;
-            ghosts.forEach(function (ghost) {
-				if (ghost.pointInMazeV == _this.pointInMazeV && ghost.pointInMazeH == _this.pointInMazeH) {
-                    if (_this.energizerActive > 0) {
-                        ghost.kill();
-                        _this.ghostEaten();
-                        _this.points += 200;
-                        _this.ghostPointsPerEnergizer += 200;
-                        _this.specialMessage = String(this.ghostPointsPerEnergizer);
-                        _this.specialMessageFrames = 120;
-                        _this.specialMessageLocation = {V: ghost.pointInMazeV, H: ghost.pointInMazeH};
-                    } else {
-                        _this.dieing = _this.dieingFrames;
-
-                        // Play some audio here
-                        _this.dies();
-
-                        // Freeze ghosts
-                        ghosts.forEach(function (ghost) {
-                            ghost.freezeGhost();
-                        });
-                    }
-				}
-            });
+            // Check for a collision with another ghost if not dieing
+            this.handleCollisions();
         }
 
         // If dieing,
@@ -180,11 +193,15 @@ function Pacman(maze, ghosts) {
 
             if(this.dieing == 0) {
                 this.livesLeft--;
-                this.reset();
-                // reset ghosts (if not game over)
-                ghosts.forEach(function (ghost) {
-                    ghost.resetGhost();
-                });
+                if (this.livesLeft === 0) {
+                    this.noLivesLeft();
+                } else {
+                    this.reset();
+                    // reset ghosts (if not game over)
+                    ghosts.forEach(function (ghost) {
+                        ghost.resetGhost();
+                    });
+                }
             }
         }
     }
