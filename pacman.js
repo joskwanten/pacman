@@ -145,7 +145,7 @@ function Pacman(maze, ghosts) {
             var upAllowed = this.pointInMazeV > 0 ? maze[(this.pointInMazeV - 1) * horizontalTiles + this.pointInMazeH] > 63 : false;
             var downAllowed = this.pointInMazeV < verticalTiles - 1 ? maze[(this.pointInMazeV + 1) * horizontalTiles + this.pointInMazeH] > 63 : false;
             var leftAllowed = this.pointInMazeH == 0 || maze[this.pointInMazeV * horizontalTiles + (this.pointInMazeH - 1)] > 63;
-            var rightAllowed = this.pointInMazeH == horizontalTiles -1 || maze[this.pointInMazeV * horizontalTiles + this.pointInMazeH + 1] > 63;
+            var rightAllowed = this.pointInMazeH == horizontalTiles - 1 || maze[this.pointInMazeV * horizontalTiles + this.pointInMazeH + 1] > 63;
 
 
             if (keyStates.indexOf(38) >= 0 && upAllowed) // Up

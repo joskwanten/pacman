@@ -213,14 +213,16 @@ function Ghost(id, name, color, character, maze, tileSize) {
                     }
                     break;
                 case "left":
-                    newDistance = Math.pow(Math.abs(_this.pointInMazeV - targetV), 2) + Math.pow(Math.abs(_this.pointInMazeH - 1 - targetH), 2);
+                    var l = _this.pointInMazeH === 0 ? horizontalTiles - 1 : _this.pointInMazeH - 1;
+                    newDistance = Math.pow(Math.abs(_this.pointInMazeV - targetV), 2) + Math.pow(Math.abs(l - targetH), 2);
                     if (newDistance < distance){
                         direction = "left";
                         distance = newDistance
                     }
                     break;
                 case "right":
-                    newDistance = Math.pow(Math.abs(_this.pointInMazeV - targetV), 2) + Math.pow(Math.abs(_this.pointInMazeH + 1 - targetH), 2);
+                    var r = _this.pointInMazeH === horizontalTiles - 1 ? 0 : _this.pointInMazeH  + 1;
+                    newDistance = Math.pow(Math.abs(_this.pointInMazeV - targetV), 2) + Math.pow(Math.abs(r - targetH), 2);
                     if (newDistance < distance) {
                         direction = "right";
                         distance = newDistance;
@@ -275,6 +277,17 @@ function Ghost(id, name, color, character, maze, tileSize) {
 
         if (this.x % tileSize == 0 && this.y % tileSize == 0) {
             this.pointInMazeH = this.x / tileSize;
+
+            if (this.pointInMazeH < 0) {
+                this.pointInMazeH = horizontalTiles -1;
+                this.x = this.pointInMazeH  * tileSize
+            }
+
+            if (this.pointInMazeH >= horizontalTiles) {
+                this.pointInMazeH = 0;
+                this.x = this.pointInMazeH  * tileSize
+            }
+
             this.pointInMazeV = this.y / tileSize;
 
             if (this.killed && this.pointInMazeH == ghostHouseH && this.pointInMazeV == ghostHouseV) {
@@ -294,8 +307,11 @@ function Ghost(id, name, color, character, maze, tileSize) {
 
             var upAllowed = this.pointInMazeV > 0 ? maze[(this.pointInMazeV - 1) * horizontalTiles + this.pointInMazeH] > 63 : false;
             var downAllowed = this.pointInMazeV < verticalTiles - 1 ? maze[(this.pointInMazeV + 1) * horizontalTiles + this.pointInMazeH] > 63 : false;
-            var leftAllowed = this.pointInMazeH > 0 ? maze[this.pointInMazeV * horizontalTiles + (this.pointInMazeH - 1)] > 63 : false;
-            var rightAllowed = this.pointInMazeH < horizontalTiles - 1 ? maze[this.pointInMazeV * horizontalTiles + this.pointInMazeH + 1] > 63 : false;
+            //var leftAllowed = this.pointInMazeH > 0 ? maze[this.pointInMazeV * horizontalTiles + (this.pointInMazeH - 1)] > 63 : false;
+            //var rightAllowed = this.pointInMazeH < horizontalTiles - 1 ? maze[this.pointInMazeV * horizontalTiles + this.pointInMazeH + 1] > 63 : false;
+
+            var leftAllowed = this.pointInMazeH == 0 || maze[this.pointInMazeV * horizontalTiles + (this.pointInMazeH - 1)] > 63;
+            var rightAllowed = this.pointInMazeH == horizontalTiles - 1 || maze[this.pointInMazeV * horizontalTiles + this.pointInMazeH + 1] > 63;
 
             var allowedDirections = [];
 
